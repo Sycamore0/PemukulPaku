@@ -1,4 +1,5 @@
-﻿using PemukulPaku.Resources.Proto;
+﻿using Common.Resources.Proto;
+using Common;
 
 namespace PemukulPaku
 {
@@ -11,6 +12,9 @@ namespace PemukulPaku
             {
                 Msg = "Hello!"
             };
+            Console.WriteLine(Global.config.Gameserver.Host);
+            new Thread(HttpServer.Program.Main).Start();
+            Console.ReadKey(true);
         }
     }
 }

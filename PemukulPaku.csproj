@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -14,11 +14,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="protobuf-net" Version="3.2.16" />
+    <Compile Remove="HttpServer\**" />
+    <EmbeddedResource Remove="HttpServer\**" />
+    <None Remove="HttpServer\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="Common\Common.csproj" />
+    <ProjectReference Include="HttpServer\HttpServer.csproj" />
   </ItemGroup>
 
 </Project>
