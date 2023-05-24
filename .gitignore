@@ -363,5 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Personal
-!.gitkeep
 Common/Resources/**
+!.gitkeep
