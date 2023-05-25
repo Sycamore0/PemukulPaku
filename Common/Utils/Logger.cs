@@ -1,0 +1,58 @@
+﻿namespace Common.Utils
+{
+    public class Logger
+    {
+        private readonly string _name;
+        private readonly ConsoleColor _color;
+
+        public Logger(string name, ConsoleColor color = ConsoleColor.Cyan)
+        {
+            _name = name;
+            _color = color;
+        }
+
+        public void Log(params string[] message)
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(DateTime.Now.ToString("HH:mm:ss "));
+            Console.ResetColor();
+            Console.Write("<");
+            Console.ForegroundColor = _color;
+            Console.Write(_name);
+            Console.ResetColor();
+            Console.Write("> ");
+            Console.WriteLine(string.Join("\t", message));
+            Console.ResetColor();
+        }
+
+        public void Warn(params string[] message)
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(DateTime.Now.ToString("HH:mm:ss "));
+            Console.ResetColor();
+            Console.Write("<");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write(_name);
+            Console.ResetColor();
+            Console.Write("> ");
+            Console.WriteLine(string.Join("\t", message));
+            Console.ResetColor();
+        }
+
+        public void Error(params string[] message)
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(DateTime.Now.ToString("HH:mm:ss "));
+            Console.ResetColor();
+            Console.Write("<");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write(_name);
+            Console.ResetColor();
+            Console.Write("> ");
+            Console.BackgroundColor = ConsoleColor.Cyan;
+            Console.BackgroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine(string.Join("\t", message));
+            Console.ResetColor();
+        }
+    }
+}

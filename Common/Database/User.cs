@@ -1,5 +1,4 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using Common.Resources.Proto;
 using MongoDB.Driver;
 
@@ -8,7 +7,7 @@ namespace Common.Database
     public class User
     {
         public static readonly IMongoCollection<UserScheme> collection = Global.db.GetCollection<UserScheme>("Users");
-
+        
         public static UserScheme CreateUser(string name)
         {
             UserScheme user = new()

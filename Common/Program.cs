@@ -1,4 +1,5 @@
-﻿using Config.Net;
+﻿using Common.Utils;
+using Config.Net;
 using MongoDB.Driver;
 
 namespace Common
@@ -6,6 +7,7 @@ namespace Common
     public static class Global
     {
         public static IConfig config = new ConfigurationBuilder<IConfig>().UseJsonFile("config.json").Build();
+        public static Logger c = new("Global");
 
         public static MongoClient MongoClient = new MongoClient(config.DatabaseUri);
         public static IMongoDatabase db = MongoClient.GetDatabase("PemukulPaku");
@@ -14,7 +16,7 @@ namespace Common
 
     public interface IConfig
     {
-        [Option(DefaultValue = VerboseLevel.Warns)]
+        [Option(DefaultValue = VerboseLevel.Normal)]
         VerboseLevel VerboseLevel { get; }
 
         [Option(DefaultValue = false)]
@@ -57,8 +59,8 @@ namespace Common
 
     public enum VerboseLevel
     {
-        Errors = 0,
-        Warns = 1,
+        Silent = 0,
+        Normal = 1,
         Debug = 2
     }
 }

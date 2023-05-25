@@ -1,10 +1,13 @@
 using Common;
+using Common.Utils;
 using HttpServer.Controllers;
 
 namespace HttpServer
 {
     public class Program
     {
+        private static readonly Logger c = new("HTTP", ConsoleColor.Green);
+
         public static void Main()
         {
             Thread.CurrentThread.IsBackground = true;
@@ -20,7 +23,38 @@ namespace HttpServer
             AccountController.AddHandlers(app);
             ConfigController.AddHandlers(app);
 
+            app.UseMiddleware<RequestLoggingMiddleware>();
+            c.Log($"HTTP server started on port 80 & 443"); // A lie
             app.Run();
+        }
+
+        private class RequestLoggingMiddleware
+        {
+            private readonly RequestDelegate _next;
+            private static readonly string[] SurpressedRoutes = new string[] { "/report", "/sdk/dataUpload" };
+
+            public RequestLoggingMiddleware(RequestDelegate next)
+            {
+                _next = next;
+            }
+
+            public async Task Invoke(HttpContext context)
+            {
+                try
+                {
+                    await _next(context);
+                }
+                finally
+                {
+                    if ((int)Global.config.VerboseLevel > (int)VerboseLevel.Normal)
+                    {
+                        c.Log($"{context.Response.StatusCode} {context.Request.Method.ToUpper()} {context.Request.Path}");
+                    }else if(((int)Global.config.VerboseLevel > (int)VerboseLevel.Silent) && (Array.IndexOf(SurpressedRoutes, context.Request.Path.ToString()) == -1))
+                    {
+                        c.Log($"{context.Response.StatusCode} {context.Request.Method.ToUpper()} {context.Request.Path}");
+                    }
+                }
+            }
         }
     }
 }
