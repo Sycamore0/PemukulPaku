@@ -6,11 +6,11 @@ namespace Common
 {
     public static class Global
     {
-        public static IConfig config = new ConfigurationBuilder<IConfig>().UseJsonFile("config.json").Build();
-        public static Logger c = new("Global");
+        public static readonly IConfig config = new ConfigurationBuilder<IConfig>().UseJsonFile("config.json").Build();
+        public static readonly Logger c = new("Global");
 
-        public static MongoClient MongoClient = new MongoClient(config.DatabaseUri);
-        public static IMongoDatabase db = MongoClient.GetDatabase("PemukulPaku");
+        public static readonly MongoClient MongoClient = new(config.DatabaseUri);
+        public static readonly IMongoDatabase db = MongoClient.GetDatabase("PemukulPaku");
         public static long GetUnixInSeconds() => ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds();
     }
 

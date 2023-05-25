@@ -7,7 +7,7 @@ namespace PemukulPaku.Gameserver
 {
     public class Server
     {
-        public static Logger c = new("TCP", ConsoleColor.Blue);
+        public static readonly Logger c = new("TCP", ConsoleColor.Blue);
 
         public static void Start()
         {
