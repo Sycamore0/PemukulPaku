@@ -17,6 +17,8 @@ namespace HttpServer
             app.Urls.Add($"https://*:{Global.config.Http.HttpsPort}");
 
             DispatchController.AddHandlers(app);
+            AccountController.AddHandlers(app);
+            ConfigController.AddHandlers(app);
 
             app.Run();
         }

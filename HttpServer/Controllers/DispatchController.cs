@@ -24,6 +24,7 @@ namespace HttpServer.Controllers
                         }
                     }
                 };
+                ctx.Response.Headers.Add("Content-Type", "application/json");
                 return ctx.Response.WriteAsync(JsonConvert.SerializeObject(rsp));
             });
 
@@ -59,6 +60,7 @@ namespace HttpServer.Controllers
                         MihoyoSdkEnv = "2"
                     }
                 };
+                ctx.Response.Headers.Add("Content-Type", "application/json");
                 return ctx.Response.WriteAsync(JsonConvert.SerializeObject(rsp));
             });
         }
@@ -89,7 +91,7 @@ namespace HttpServer.Controllers
                 BlockErrorDialog = "1",
                 ElevatorModelPath = "GameEntry/EVA/StartLoading_Model",
                 ExResBuffSize = "10485760",
-                IsXxxx = "1",
+                IsXxxx = "0",
                 MtpSwitch = "0",
                 NetworkFeedbackEnable = "0",
                 ShowBulletinButton = "0",
@@ -188,7 +190,15 @@ namespace HttpServer.Controllers
                 switch (type)
                 {
                     case "os":
-                        return new string[] { };
+                        return Global.config.UseLocalCache ? new string[]
+                        {
+                            $"{Global.config.Gameserver.Host}/com.miHoYo.bh3oversea",
+                            $"{Global.config.Gameserver.Host}/com.miHoYo.bh3oversea"
+                        } : new string[]
+                        {
+                            "hk-bigfile-os-mihayo.akamaized.net/com.miHoYo.bh3oversea",
+                            "bigfile-aliyun-os.honkaiimpact3.com/com.miHoYo.bh3oversea"
+                        };
                     case "gf":
                         if (version.Contains("beta"))
                         {

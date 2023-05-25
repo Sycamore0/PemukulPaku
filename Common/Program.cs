@@ -19,7 +19,10 @@ namespace Common
 
         [Option(DefaultValue = false)]
         bool UseLocalCache { get; }
-        
+
+        [Option(DefaultValue = true)]
+        bool CreateAccountOnLoginAttempt { get; }
+
         [Option(DefaultValue = "mongodb://localhost:27017/PemukulPaku")]
         string DatabaseUri { get; }
 
@@ -32,7 +35,7 @@ namespace Common
         public interface IGameserver
         {
             [Option(DefaultValue = "127.0.0.1")]
-            public string Host { get; }
+            public string Host { get; set; }
 
             [Option(DefaultValue = (uint)(16100))]
             public uint Port { get; }

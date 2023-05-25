@@ -14,14 +14,14 @@ namespace Common.Database
             UserScheme user = new()
             {
                 Name = name,
-                Uid = 1001,
+                Uid = (uint)AutoIncrement.GetNextNumber("UID", 1000),
                 Nick = "",
                 Exp = 0,
                 Hcoin = 0,
                 Stamina = 80,
                 SelfDesc = "",
                 IsFirstLogin = true,
-                Token = Guid.NewGuid(),
+                Token = Guid.NewGuid().ToString(),
                 WarshipId = 0,
                 WarshipAvatar = new WarshipAvatarData()
                 {
@@ -39,6 +39,18 @@ namespace Common.Database
             return user;
         }
 
+        public static UserScheme FromName(string name)
+        {
+            UserScheme? user = collection.AsQueryable().Where(d => d.Name == name).FirstOrDefault();
+            return user ?? CreateUser(name);
+        }
+
+        public static UserScheme? FromToken(string token)
+        {
+            UserScheme? user = collection.AsQueryable().Where(d => d.Token == token).FirstOrDefault();
+            return user;
+        }
+
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public class UserScheme
         {
@@ -51,9 +63,7 @@ namespace Common.Database
             public int Stamina { get; set; }
             public string SelfDesc { get; set; }
             public bool IsFirstLogin { get; set; }
-
-            [BsonGuidRepresentation(GuidRepresentation.Standard)]
-            public Guid Token { get; set; }
+            public string Token { get; set; }
             public int WarshipId { get; set; }
             public WarshipAvatarData WarshipAvatar { get; set; }
             public int AssistantAvatarId { get; set; }
