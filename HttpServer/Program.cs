@@ -49,7 +49,7 @@ namespace HttpServer
                     if ((int)Global.config.VerboseLevel > (int)VerboseLevel.Normal)
                     {
                         c.Log($"{context.Response.StatusCode} {context.Request.Method.ToUpper()} {context.Request.Path}");
-                    }else if(((int)Global.config.VerboseLevel > (int)VerboseLevel.Silent) && (Array.IndexOf(SurpressedRoutes, context.Request.Path.ToString()) == -1))
+                    }else if(((int)Global.config.VerboseLevel > (int)VerboseLevel.Silent) && !SurpressedRoutes.Contains(context.Request.Path.ToString()))
                     {
                         c.Log($"{context.Response.StatusCode} {context.Request.Method.ToUpper()} {context.Request.Path}");
                     }

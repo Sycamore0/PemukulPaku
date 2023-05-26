@@ -19,9 +19,9 @@ namespace PemukulPaku
             };
 
             new Thread(HttpServer.Program.Main).Start();
-            new Thread(Server.Start).Start();
+            _ = Server.GetInstance();
 
-            Console.ReadKey(true);
+            Console.Read();
         }
     }
 }

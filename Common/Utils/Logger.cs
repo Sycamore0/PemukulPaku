@@ -49,10 +49,28 @@
             Console.Write(_name);
             Console.ResetColor();
             Console.Write("> ");
-            Console.BackgroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.DarkRed;
             Console.WriteLine(string.Join("\t", message));
             Console.ResetColor();
+        }
+        
+        public void Debug(params string[] message)
+        {
+#if DEBUG
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(DateTime.Now.ToString("HH:mm:ss "));
+            Console.ResetColor();
+            Console.Write("<");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write(_name);
+            Console.ResetColor();
+            Console.Write("> ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine(string.Join("\t", message));
+            Console.ResetColor();
+#endif
         }
     }
 }

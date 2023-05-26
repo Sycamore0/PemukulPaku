@@ -8,27 +8,50 @@ namespace PemukulPaku.Gameserver
     public class Server
     {
         public static readonly Logger c = new("TCP", ConsoleColor.Blue);
+        public readonly Dictionary<string, Session> Sessions = new();
+        private static Server? Instance;
 
-        public static void Start()
+        public static Server GetInstance() { 
+            return Instance ??= new Server();
+        }
+
+        public Server()
+        {
+            Task.Run(Start);
+        }
+
+        public void Start()
         {
             TcpListener Listener = new(IPAddress.Parse("0.0.0.0"), (int)Global.config.Gameserver.Port);
 
-            try
+            while(true)
             {
-                Listener.Start();
-                c.Log($"TCP server started on port {Global.config.Gameserver.Port}");
-
-                while (true)
+                try
                 {
-                    TcpClient Client = Listener.AcceptTcpClient();
-                    c.Warn($"{Client.Client.RemoteEndPoint} connected!");
-                    NetworkStream stream = Client.GetStream();
+                    Listener.Start();
+                    c.Log($"TCP server started on port {Global.config.Gameserver.Port}");
+
+                    while (true)
+                    {
+                        TcpClient Client = Listener.AcceptTcpClient();
+                        string Id = Client.Client.RemoteEndPoint!.ToString()!;
+
+                        c.Warn($"{Id} connected");
+                        Sessions.Add(Id, new Session(Id, Client));
+                        LogClients();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    c.Error("TCP server error: " + ex.Message);
+                    Thread.Sleep(3000);
                 }
             }
-            catch (Exception ex)
-            {
-                c.Error("TCP server error: " + ex.Message);
-            }
+        }
+
+        public void LogClients()
+        {
+            c.Log($"Connected clients: {Sessions.Count}");
         }
     }
 }
