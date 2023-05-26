@@ -26,7 +26,7 @@ namespace PemukulPaku.GameServer
 
             if (PacketName == null)
             {
-                c.Error($"CMD ID {CmdId} NOT RECOGNIZED!");
+                c.Warn($"CmdId {CmdId} not recognized!");
             }
 
             HeadMagic = buf.Take(4).ToArray();
@@ -35,20 +35,52 @@ namespace PemukulPaku.GameServer
             BodyLen = BinaryPrimitives.ReadUInt32BigEndian(buf.AsSpan(30));
             Body = buf.Skip(34 + headerLen).Take((int)BodyLen).ToArray();
             TailMagic = buf.Skip(buf.Length - 4).ToArray();
+        }
+
+        public T GetDecodedBody<T>()
+        {
+            T SerializedBody = default!;
 
             try
             {
                 MemoryStream ms = new(Body);
-                object SerializedBody = Serializer.NonGeneric.Deserialize(typeof(Common.Global).Assembly.GetType($"Common.Resources.Proto.{PacketName}"), ms)!;
-                c.Debug(JsonConvert.SerializeObject(SerializedBody));
+                SerializedBody = Serializer.Deserialize<T>(ms)!;
             }
             catch
             {
-                c.Error($"Failed to deserialized packet with Common.Resources.Proto.{PacketName}");
+                string? PacketName = Enum.GetName(typeof(CmdId), CmdId);
+                c.Error($"Failed to deserialize {PacketName ?? CmdId.ToString()}!");
             }
+            return SerializedBody;
+        }
+
+        public static Packet FromProto<T>(T proto, CmdId cmdId)
+        {
+            MemoryStream stream = new ();
+            Serializer.Serialize(stream, proto);
+            byte[] data = stream.ToArray();
+
+            byte[] buf = new byte[38 + data.Length];
+            Array.Fill(buf, (byte)0);
+
+            BinaryPrimitives.WriteUInt32BigEndian(buf, 0x1234567);
+            BinaryPrimitives.WriteUInt16BigEndian(buf.AsSpan(4), 1);
+            BinaryPrimitives.WriteUInt16BigEndian(buf.AsSpan(6), 0);
+            BinaryPrimitives.WriteUInt32BigEndian(buf.AsSpan(8), 0);
+            BinaryPrimitives.WriteUInt32BigEndian(buf.AsSpan(12), 0);
+            BinaryPrimitives.WriteUInt32BigEndian(buf.AsSpan(16), 0);
+            BinaryPrimitives.WriteUInt32BigEndian(buf.AsSpan(20), 0);
+            BinaryPrimitives.WriteUInt32BigEndian(buf.AsSpan(24), (uint)cmdId);
+            BinaryPrimitives.WriteUInt16BigEndian(buf.AsSpan(28), 0);
+            BinaryPrimitives.WriteUInt32BigEndian(buf.AsSpan(30), (uint)data.Length);
+            data.CopyTo(buf.AsSpan(34));
+            BinaryPrimitives.WriteUInt32BigEndian(buf.AsSpan(34 + data.Length), 0x89abcdef);
+
+            return new Packet(buf);
         }
     }
 
+    [AttributeUsage(AttributeTargets.Class)]
     public class PacketCmdId : Attribute
     {
         public CmdId Id { get; }
@@ -90,14 +122,11 @@ namespace PemukulPaku.GameServer
 
             c.Log("Finished Loading Packet Handlers");
         }
-    }
 
-    [PacketCmdId(CmdId.PlayerLoginReq)]
-    public class PlayerLoginReqHandler : IPacketHandler
-    {
-        public void Handle(Session session, Packet packet)
+        public static IPacketHandler? GetPacketHandler(CmdId cmdId)
         {
-            throw new NotImplementedException();
+            Handlers.TryGetValue(cmdId, out IPacketHandler? handler);
+            return handler;
         }
     }
 }

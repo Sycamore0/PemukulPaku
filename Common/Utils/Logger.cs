@@ -1,4 +1,6 @@
-﻿namespace Common.Utils
+﻿using System.Diagnostics;
+
+namespace Common.Utils
 {
     public class Logger
     {
@@ -39,6 +41,13 @@
             Console.ResetColor();
         }
 
+        public void Trail(params string[] msg)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine($"\t→ {string.Join(' ', msg)}");
+            Console.ResetColor();
+        }
+
         public void Error(params string[] message)
         {
             Console.ForegroundColor = ConsoleColor.White;
@@ -53,6 +62,10 @@
             Console.BackgroundColor = ConsoleColor.DarkRed;
             Console.WriteLine(string.Join("\t", message));
             Console.ResetColor();
+#if DEBUG
+            StackTrace trace = new(true);
+            Trail(trace.ToString());
+#endif
         }
         
         public void Debug(params string[] message)

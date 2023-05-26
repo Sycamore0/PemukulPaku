@@ -1,5 +1,8 @@
 ﻿using System.Net.Sockets;
+using Common;
+using Common.Resources.Proto;
 using Common.Utils;
+using PemukulPaku.GameServer.Game;
 
 namespace PemukulPaku.GameServer
 {
@@ -8,6 +11,7 @@ namespace PemukulPaku.GameServer
         public readonly string Id;
         public readonly TcpClient Client;
         public readonly Logger c;
+        public Player Player = default!;
 
         public Session(string id, TcpClient client)
         {
@@ -96,7 +100,53 @@ namespace PemukulPaku.GameServer
 
         public void ProcessPacket(byte[] packet)
         {
-            _ = new Packet(packet);
+            Packet _packet = new(packet);
+            string PacketName = Enum.GetName(typeof(CmdId), _packet.CmdId)!;
+            try
+            {
+                CmdId cmdId = (CmdId)Enum.ToObject(typeof(CmdId), _packet.CmdId);
+                IPacketHandler? handler = PacketFactory.GetPacketHandler(cmdId);
+
+                if (handler == null)
+                {
+                    c.Warn($"{PacketName} not handled!");
+                    return;
+                }
+
+                c.Log(PacketName);
+
+                handler.Handle(this, _packet);
+            }
+            catch(Exception ex) 
+            { 
+                if ((int)Global.config.VerboseLevel > 0)
+                {
+                    c.Error(ex.Message); 
+                }
+            }
+        }
+
+        public void Send(params Packet[] packets)
+        {
+            foreach (Packet packet in packets)
+            {
+                string PacketName = Enum.GetName(typeof(CmdId), packet.CmdId)!;
+
+                try
+                {
+                    Client.GetStream().Write(packet.Raw, 0, packet.Raw.Length);
+                    c.Log(PacketName);
+                }
+                catch (Exception ex)
+                {
+                    c.Error($"Failed to send {PacketName}:" + ex.Message);
+                }
+            }
+        }
+
+        public override string ToString()
+        {
+            return Id;
         }
     }
 }
