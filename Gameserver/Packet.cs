@@ -3,8 +3,9 @@ using Common.Resources.Proto;
 using Newtonsoft.Json;
 using Common.Utils;
 using ProtoBuf;
+using System.Reflection;
 
-namespace PemukulPaku.Gameserver
+namespace PemukulPaku.GameServer
 {
     public class Packet
     {
@@ -45,6 +46,58 @@ namespace PemukulPaku.Gameserver
             {
                 c.Error($"Failed to deserialized packet with Common.Resources.Proto.{PacketName}");
             }
+        }
+    }
+
+    public class PacketCmdId : Attribute
+    {
+        public CmdId Id { get; }
+
+        public PacketCmdId(CmdId id)
+        {
+            Id = id;
+        }
+    }
+
+    public interface IPacketHandler
+    {
+        public void Handle(Session session, Packet packet);
+    }
+
+    public static class PacketFactory
+    {
+        public static readonly Dictionary<CmdId, IPacketHandler> Handlers = new();
+        static readonly Logger c = new("PKT", ConsoleColor.Yellow);
+
+        public static void LoadPacketHandlers()
+        {
+            c.Log("Loading Packet Handlers...");
+
+            IEnumerable<Type> classes = from t in Assembly.GetExecutingAssembly().GetTypes()
+                                        select t;
+
+            foreach ((Type t, PacketCmdId attr) in from Type? t in classes.ToList()
+                                                   let attrs = (Attribute[])t.GetCustomAttributes(typeof(PacketCmdId), false)
+                                                   where attrs.Length > 0
+                                                   let attr = (PacketCmdId)attrs[0]
+                                                   where !Handlers.ContainsKey(attr.Id)
+                                                   select (t, attr))
+            {
+                Handlers.Add(attr.Id, (IPacketHandler)Activator.CreateInstance(t));
+
+                c.Log($"Loaded PacketHandler {t.Name} for Packet Type {attr.Id}");
+            }
+
+            c.Log("Finished Loading Packet Handlers");
+        }
+    }
+
+    [PacketCmdId(CmdId.PlayerLoginReq)]
+    public class PlayerLoginReqHandler : IPacketHandler
+    {
+        public void Handle(Session session, Packet packet)
+        {
+            throw new NotImplementedException();
         }
     }
 }

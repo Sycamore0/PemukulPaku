@@ -3,7 +3,7 @@ using System.Net;
 using Common;
 using Common.Utils;
 
-namespace PemukulPaku.Gameserver
+namespace PemukulPaku.GameServer
 {
     public class Server
     {
@@ -11,7 +11,8 @@ namespace PemukulPaku.Gameserver
         public readonly Dictionary<string, Session> Sessions = new();
         private static Server? Instance;
 
-        public static Server GetInstance() { 
+        public static Server GetInstance()
+        {
             return Instance ??= new Server();
         }
 
@@ -24,7 +25,7 @@ namespace PemukulPaku.Gameserver
         {
             TcpListener Listener = new(IPAddress.Parse("0.0.0.0"), (int)Global.config.Gameserver.Port);
 
-            while(true)
+            while (true)
             {
                 try
                 {

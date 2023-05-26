@@ -1,7 +1,7 @@
 ﻿using Common.Resources.Proto;
 using Common;
 using System.Net.NetworkInformation;
-using PemukulPaku.Gameserver;
+using PemukulPaku.GameServer;
 
 namespace PemukulPaku
 {
@@ -19,6 +19,7 @@ namespace PemukulPaku
             };
 
             new Thread(HttpServer.Program.Main).Start();
+            PacketFactory.LoadPacketHandlers();
             _ = Server.GetInstance();
 
             Console.Read();

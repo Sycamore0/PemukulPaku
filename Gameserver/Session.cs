@@ -1,8 +1,7 @@
 ﻿using System.Net.Sockets;
 using Common.Utils;
-using Newtonsoft.Json;
 
-namespace PemukulPaku.Gameserver
+namespace PemukulPaku.GameServer
 {
     public class Session
     {
