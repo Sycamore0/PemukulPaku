@@ -30,5 +30,10 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: net6.0
+        path: PemukulPaku/bin/Debug
     - name: Clean up
       run: rm Resources.zip
