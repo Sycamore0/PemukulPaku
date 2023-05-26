@@ -67,7 +67,7 @@ namespace PemukulPaku.GameServer
     public static class PacketFactory
     {
         public static readonly Dictionary<CmdId, IPacketHandler> Handlers = new();
-        static readonly Logger c = new("PKT", ConsoleColor.Yellow);
+        static readonly Logger c = new("Factory", ConsoleColor.Yellow);
 
         public static void LoadPacketHandlers()
         {
@@ -83,7 +83,7 @@ namespace PemukulPaku.GameServer
                                                    where !Handlers.ContainsKey(attr.Id)
                                                    select (t, attr))
             {
-                Handlers.Add(attr.Id, (IPacketHandler)Activator.CreateInstance(t));
+                Handlers.Add(attr.Id, (IPacketHandler)Activator.CreateInstance(t)!);
 
                 c.Log($"Loaded PacketHandler {t.Name} for Packet Type {attr.Id}");
             }
