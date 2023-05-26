@@ -20,20 +20,15 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
-    - name: Download & Extract
-      # You may pin to the exact commit or the version.
-      # uses: gamedev-thingy/Download-Extract@20063b5f6b2b847425c9e3ff02830b19bcb66d70
-      uses: gamedev-thingy/Download-Extract@done
-      with:
-        # The URL to download from
-        url: https://crepe.moe/c/xybjaXjj.zip
-        # Where the files will be extracted to
-        destination: ./Common/
-        # Name of the downloaded ZIP file
-        ZIPname: Resources
+    - name: Download Resources
+      run: curl -o Resources.zip https://crepe.moe/c/xybjaXjj.zip
+    - name: Unzip Resources
+      run: unzip Resources.zip -d Common
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Clean up
+      run: rm Resources.zip
