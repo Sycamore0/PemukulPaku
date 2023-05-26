@@ -27,13 +27,13 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet publish /t:PemukulPaku /p:Configuration=Debug
+      run: dotnet publish PemukulPaku/PemukulPaku.csproj -c Release -o PemukulPaku_build
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: net6.0
-        path: PemukulPaku/bin/Debug
+        path: PemukulPaku/PemukulPaku_build
     - name: Clean up
-      run: rm Resources.zip
+      run: rm Resources.zip && rm -rf PemukulPaku/PemukulPaku_build
