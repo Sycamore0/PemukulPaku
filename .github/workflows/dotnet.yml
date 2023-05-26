@@ -23,7 +23,7 @@ jobs:
     - name: Download Resources
       run: curl -o Resources.zip https://crepe.moe/c/xybjaXjj.zip
     - name: Unzip Resources
-      run: unzip Resources.zip -d Common
+      run: unzip Resources.zip -d Common -n
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
