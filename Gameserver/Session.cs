@@ -1,5 +1,6 @@
 ﻿using System.Net.Sockets;
 using Common.Utils;
+using Newtonsoft.Json;
 
 namespace PemukulPaku.Gameserver
 {
@@ -84,6 +85,7 @@ namespace PemukulPaku.Gameserver
                 {
                     c.Warn($"{Id} disconnected");
                     Server.GetInstance().Sessions.Remove(Id);
+                    c.Debug("TCP client disconnect reason: " + ex.Message);
                 }
                 else
                 {
@@ -95,7 +97,7 @@ namespace PemukulPaku.Gameserver
 
         public void ProcessPacket(byte[] packet)
         {
-            c.Debug("Received packet: " + BitConverter.ToString(packet).Replace("-", ""));
+            _ = new Packet(packet);
         }
     }
 }
