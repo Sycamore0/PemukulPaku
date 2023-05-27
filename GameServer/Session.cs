@@ -1,4 +1,7 @@
-﻿using System.Net.Sockets;
+﻿using System.Data.SqlTypes;
+using System;
+using System.IO;
+using System.Net.Sockets;
 using Common;
 using Common.Resources.Proto;
 using Common.Utils;
@@ -18,84 +21,65 @@ namespace PemukulPaku.GameServer
             Id = id;
             Client = client;
             c = new Logger(Id);
-            Task.Run(() => ClientLoop(client));
+            Task.Run(ClientLoop);
         }
 
-        private void ClientLoop(TcpClient client)
+        private void ClientLoop()
         {
-            NetworkStream stream = client.GetStream();
+            NetworkStream stream = Client.GetStream();
 
             byte[] packetMagic = { 0x01, 0x23, 0x45, 0x67 }; // Magic start pattern
             byte[] packetEnd = { 0x89, 0xAB, 0xCD, 0xEF }; // Magic end pattern
 
-            byte[] buffer = new byte[4096];
-            int bytesRead;
+            byte[] msg = new byte[1 << 16];
 
-            try
+            while (Client.Connected)
             {
-                while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+                Array.Clear(msg, 0, msg.Length);
+                int len = stream.Read(msg, 0, msg.Length);
+
+                if(len > 0)
                 {
-                    // Process the received bytes
-                    for (int i = 0; i < bytesRead; i++)
+                    List<byte[]> packets = new ();
+
+                    string CursedMsg = BitConverter.ToString(msg).Replace("-", "");
+                    string CursedMagic = BitConverter.ToString(packetMagic).Replace("-", "");
+                    string CursedEnd = BitConverter.ToString(packetEnd).Replace("-", "");
+
+                    int MagicIndex = 0;
+                    int EndIndex = 0;
+
+                    while ((MagicIndex = CursedMsg.IndexOf(CursedMagic, MagicIndex)) != -1 && (EndIndex = CursedMsg.IndexOf(CursedEnd, EndIndex)) != -1)
                     {
-                        if (buffer[i] == packetMagic[0])
+                        EndIndex += 8;
+                        byte[] packet = new byte[EndIndex / 2 - MagicIndex / 2];
+                        Array.Copy(msg, MagicIndex / 2, packet, 0, EndIndex / 2 - MagicIndex / 2);
+                        packets.Add(packet);
+                        MagicIndex += MagicIndex;
+                        EndIndex += EndIndex;
+                    }
+
+                    c.Debug($"Found {packets.Count} packet");
+
+                    foreach (byte[] packet in packets)
+                    {
+                        if (Packet.IsValid(packet))
                         {
-                            bool found = true;
-                            for (int j = 1; j < packetMagic.Length; j++)
-                            {
-                                if (buffer[i + j] != packetMagic[j])
-                                {
-                                    found = false;
-                                    break;
-                                }
-                            }
-
-                            if (found)
-                            {
-                                // Magic start pattern found
-                                int endIndex = Array.IndexOf(buffer, packetEnd[0], i + packetMagic.Length);
-                                if (endIndex != -1)
-                                {
-                                    // Magic end pattern found
-                                    int packetLength = endIndex - i + packetEnd.Length;
-                                    byte[] packet = new byte[packetLength];
-                                    Array.Copy(buffer, i, packet, 0, packetLength);
-
-                                    // Process the packet
-                                    ProcessPacket(packet);
-
-                                    // Update the buffer
-                                    int remainingBytes = bytesRead - (i + packetLength);
-                                    Array.Copy(buffer, i + packetLength, buffer, 0, remainingBytes);
-
-                                    // Adjust the bytesRead value accordingly
-                                    bytesRead = remainingBytes;
-                                    i = -1; // Start processing from the beginning of the buffer again
-                                }
-                                else
-                                {
-                                    // End pattern not found, break the loop and wait for more data
-                                    break;
-                                }
-                            }
+                            ProcessPacket(packet);
+                        }
+                        else
+                        {
+                            c.Error("Invalid packet received:", BitConverter.ToString(packet).Replace("-", ""));
                         }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                if (Client != null)
-                {
-                    c.Warn($"{Id} disconnected");
-                    Server.GetInstance().Sessions.Remove(Id);
-                    c.Debug("TCP client disconnect reason: " + ex.Message);
-                }
-                else
-                {
-                    c.Error("TCP client error: " + ex.Message);
-                }
-            }
-            finally { Server.GetInstance().LogClients(); };
+
+            c.Debug("ClientLoop ends");
+            Server.GetInstance().LogClients();
+
+            c.Warn($"{Id} disconnected");
+            Server.GetInstance().Sessions.Remove(Id);
         }
 
         public void ProcessPacket(byte[] packet)

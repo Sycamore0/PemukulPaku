@@ -54,6 +54,13 @@ namespace PemukulPaku.GameServer
             return SerializedBody;
         }
 
+        public static bool IsValid(byte[] data)
+        {
+            string hexString = BitConverter.ToString(data).Replace("-", "");
+            return hexString.StartsWith("01234567", StringComparison.OrdinalIgnoreCase) &&
+                   hexString.EndsWith("89ABCDEF", StringComparison.OrdinalIgnoreCase);
+        }
+
         public static Packet FromProto<T>(T proto, CmdId cmdId)
         {
             MemoryStream stream = new ();
