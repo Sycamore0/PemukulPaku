@@ -28,9 +28,6 @@ namespace PemukulPaku.GameServer
         {
             NetworkStream stream = Client.GetStream();
 
-            byte[] packetMagic = { 0x01, 0x23, 0x45, 0x67 }; // Magic start pattern
-            byte[] packetEnd = { 0x89, 0xAB, 0xCD, 0xEF }; // Magic end pattern
-
             byte[] msg = new byte[1 << 16];
 
             while (Client.Connected)
@@ -38,28 +35,33 @@ namespace PemukulPaku.GameServer
                 Array.Clear(msg, 0, msg.Length);
                 int len = stream.Read(msg, 0, msg.Length);
 
-                if(len > 0)
+                if (len > 0)
                 {
                     List<byte[]> packets = new ();
 
-                    string CursedMsg = BitConverter.ToString(msg).Replace("-", "");
-                    string CursedMagic = BitConverter.ToString(packetMagic).Replace("-", "");
-                    string CursedEnd = BitConverter.ToString(packetEnd).Replace("-", "");
+                    ReadOnlySpan<byte> prefix = new byte[] { 0x01, 0x23, 0x45, 0x67 };
+                    ReadOnlySpan<byte> suffix = new byte[] { 0x89, 0xAB, 0xCD, 0xEF };
 
-                    int MagicIndex = 0;
-                    int EndIndex = 0;
+                    Span<byte> message = msg.AsSpan();
 
-                    while ((MagicIndex = CursedMsg.IndexOf(CursedMagic, MagicIndex)) != -1 && (EndIndex = CursedMsg.IndexOf(CursedEnd, EndIndex)) != -1)
+                    for (int offset = 0; offset < message.Length;)
                     {
-                        EndIndex += 8;
-                        byte[] packet = new byte[EndIndex / 2 - MagicIndex / 2];
-                        Array.Copy(msg, MagicIndex / 2, packet, 0, EndIndex / 2 - MagicIndex / 2);
-                        packets.Add(packet);
-                        MagicIndex += MagicIndex;
-                        EndIndex += EndIndex;
-                    }
+                        var segment = message[offset..];
+                        int start = segment.IndexOf(prefix);
 
-                    c.Debug($"Found {packets.Count} packet");
+                        if (start == -1)
+                            break;
+
+                        int end = segment.IndexOf(suffix);
+
+                        if (end == -1)
+                            break;
+
+                        end += suffix.Length;
+
+                        packets.Add(segment[start..end].ToArray());
+                        offset += end;
+                    }
 
                     foreach (byte[] packet in packets)
                     {
