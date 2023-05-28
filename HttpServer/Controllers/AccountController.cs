@@ -58,7 +58,7 @@ namespace HttpServer.Controllers
             {
                 StreamReader Reader = new(ctx.Request.Body);
                 ShieldVerifyBody Data = JsonConvert.DeserializeObject<ShieldVerifyBody>(Reader.ReadToEndAsync().Result);
-                User.UserScheme? user = User.FromToken(Data.Token);
+                UserScheme? user = User.FromToken(Data.Token);
 
                 ShieldLoginResponse rsp = new()
                 {
@@ -118,7 +118,7 @@ namespace HttpServer.Controllers
                 StreamReader Reader = new(ctx.Request.Body);
                 ShieldLoginBody Data = JsonConvert.DeserializeObject<ShieldLoginBody>(Reader.ReadToEndAsync().Result);
 
-                User.UserScheme user = User.FromName(Data.Account);
+                UserScheme user = User.FromName(Data.Account);
 
                 ShieldLoginResponse rsp = new()
                 {

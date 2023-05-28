@@ -13,4 +13,10 @@
     <PackageReference Include="protobuf-net" Version="3.2.16" />
   </ItemGroup>
 
+	<ItemGroup>
+		<Content Include="Resources\ExcelOutputAsset\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
 </Project>

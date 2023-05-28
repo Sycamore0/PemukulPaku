@@ -1,5 +1,6 @@
 ﻿using Common.Resources.Proto;
 using Common.Database;
+using Common;
 
 namespace PemukulPaku.GameServer.Handlers
 {
@@ -10,7 +11,7 @@ namespace PemukulPaku.GameServer.Handlers
         {
             GetPlayerTokenReq Packet = _packet.GetDecodedBody<GetPlayerTokenReq>();
             GetPlayerTokenRsp Rsp = new () { };
-            User.UserScheme? CurrentUser = User.FromToken(Packet.AccountToken);
+            UserScheme? CurrentUser = User.FromToken(Packet.AccountToken);
 
             if (CurrentUser == null || CurrentUser.Uid != uint.Parse(Packet.AccountUid))
             {
@@ -20,6 +21,13 @@ namespace PemukulPaku.GameServer.Handlers
             else
             {
                 session.Player = new Game.Player(CurrentUser);
+
+                if(session.Player.User.IsFirstLogin)
+                {
+                    AvatarScheme avatar = Common.Database.Avatar.Create(101, session.Player.User.Uid, session.Player.Equipment);
+                    if ((int)Global.config.VerboseLevel > 0)
+                        session.c.Log($"Automatically created avatar with id: {avatar.AvatarId}");
+                }
 
                 Rsp = new()
                 {

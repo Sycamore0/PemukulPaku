@@ -1,5 +1,4 @@
 ﻿using Common.Resources.Proto;
-using Newtonsoft.Json;
 
 namespace PemukulPaku.GameServer.Handlers
 {

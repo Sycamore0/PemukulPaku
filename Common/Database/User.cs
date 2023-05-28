@@ -8,8 +8,11 @@ namespace Common.Database
     {
         public static readonly IMongoCollection<UserScheme> collection = Global.db.GetCollection<UserScheme>("Users");
         
-        public static UserScheme CreateUser(string name)
+        public static UserScheme Create(string name)
         {
+            UserScheme? tryUser = collection.AsQueryable().Where(d => d.Name == name).FirstOrDefault();
+            if (tryUser != null) { return tryUser; }
+
             UserScheme user = new()
             {
                 Name = name,
@@ -41,7 +44,7 @@ namespace Common.Database
         public static UserScheme FromName(string name)
         {
             UserScheme? user = collection.AsQueryable().Where(d => d.Name == name).FirstOrDefault();
-            return user ?? CreateUser(name);
+            return user ?? Create(name);
         }
 
         public static UserScheme? FromToken(string token)
@@ -50,27 +53,33 @@ namespace Common.Database
             return user;
         }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public class UserScheme
-        {
-            public ObjectId Id { get; set; }
-            public string Name { get; set; }
-            public uint Uid { get; set; }
-            public string Nick { get; set; }
-            public int Exp { get; set; }
-            public int Hcoin { get; set; }
-            public int Stamina { get; set; }
-            public string SelfDesc { get; set; }
-            public bool IsFirstLogin { get; set; }
-            public string Token { get; set; }
-            public int WarshipId { get; set; }
-            public WarshipAvatarData WarshipAvatar { get; set; }
-            public int AssistantAvatarId { get; set; }
-            public int BirthDate { get; set; }
-            public List<AvatarTeam> AvatarTeamList { get; set; }
-            public List<CustomAvatarTeam> CustomAvatarTeamList { get; set; }
-        }        
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     }
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    public class UserScheme
+    {
+        public ObjectId Id { get; set; }
+        public string Name { get; set; }
+        public uint Uid { get; set; }
+        public string Nick { get; set; }
+        public int Exp { get; set; }
+        public int Hcoin { get; set; }
+        public int Stamina { get; set; }
+        public string SelfDesc { get; set; }
+        public bool IsFirstLogin { get; set; }
+        public string Token { get; set; }
+        public int WarshipId { get; set; }
+        public WarshipAvatarData WarshipAvatar { get; set; }
+        public int AssistantAvatarId { get; set; }
+        public int BirthDate { get; set; }
+        public List<AvatarTeam> AvatarTeamList { get; set; }
+        public List<CustomAvatarTeam> CustomAvatarTeamList { get; set; }
+
+        public void Save()
+        {
+            User.collection.ReplaceOne(Builders<UserScheme>.Filter.Eq(user => user.Id, Id), this);
+        }
+    }        
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     
 }

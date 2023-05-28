@@ -1,7 +1,4 @@
-﻿using System.Data.SqlTypes;
-using System;
-using System.IO;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using Common;
 using Common.Resources.Proto;
 using Common.Utils;
@@ -67,7 +64,7 @@ namespace PemukulPaku.GameServer
                     {
                         if (Packet.IsValid(packet))
                         {
-                            ProcessPacket(packet);
+                            ProcessPacket(new Packet(packet));
                         }
                         else
                         {
@@ -77,16 +74,13 @@ namespace PemukulPaku.GameServer
                 }
             }
 
-            c.Debug("ClientLoop ends");
-            Server.GetInstance().LogClients();
-
             c.Warn($"{Id} disconnected");
             Server.GetInstance().Sessions.Remove(Id);
+            Server.GetInstance().LogClients();
         }
 
-        public void ProcessPacket(byte[] packet)
+        public void ProcessPacket(Packet _packet)
         {
-            Packet _packet = new(packet);
             string PacketName = Enum.GetName(typeof(CmdId), _packet.CmdId)!;
             try
             {

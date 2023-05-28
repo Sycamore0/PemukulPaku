@@ -1,7 +1,6 @@
 ﻿using Common;
 using Common.Database;
 using Common.Resources.Proto;
-using Newtonsoft.Json;
 
 namespace PemukulPaku.GameServer.Handlers
 {
@@ -10,7 +9,7 @@ namespace PemukulPaku.GameServer.Handlers
     {
         public void Handle(Session session, Packet packet)
         {
-            User.UserScheme User = session.Player.User;
+            UserScheme User = session.Player.User;
 
             PlayerLoginRsp Rsp = new()
             {

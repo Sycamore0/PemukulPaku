@@ -123,8 +123,9 @@ namespace PemukulPaku.GameServer
                                                    select (t, attr))
             {
                 Handlers.Add(attr.Id, (IPacketHandler)Activator.CreateInstance(t)!);
-
+#if DEBUG
                 c.Log($"Loaded PacketHandler {t.Name} for Packet Type {attr.Id}");
+#endif
             }
 
             c.Log("Finished Loading Packet Handlers");

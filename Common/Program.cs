@@ -17,7 +17,7 @@ namespace Common
     public interface IConfig
     {
         [Option(DefaultValue = VerboseLevel.Normal)]
-        VerboseLevel VerboseLevel { get; }
+        VerboseLevel VerboseLevel { get; set; }
 
         [Option(DefaultValue = false)]
         bool UseLocalCache { get; }
