@@ -1,6 +1,5 @@
 ﻿using System.Buffers.Binary;
 using Common.Resources.Proto;
-using Newtonsoft.Json;
 using Common.Utils;
 using ProtoBuf;
 using System.Reflection;
