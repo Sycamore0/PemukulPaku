@@ -42,10 +42,13 @@ namespace PemukulPaku.GameServer.Handlers
                 }
 
                 session.Player.User.Hcoin += DecodedBody.ChallengeIndexLists.Length * 5;
+                session.Player.User.Exp += 100;
 
+                session.ProcessPacket(Packet.FromProto(new GetMainDataReq() { }, CmdId.GetMainDataReq));
                 session.ProcessPacket(Packet.FromProto(new GetEquipmentDataReq() { }, CmdId.GetEquipmentDataReq));
                 session.ProcessPacket(Packet.FromProto(new GetWorldMapDataReq() { }, CmdId.GetWorldMapDataReq));
                 session.ProcessPacket(Packet.FromProto(new ChapterGroupGetDataReq() { }, CmdId.ChapterGroupGetDataReq));
+                session.ProcessPacket(Packet.FromProto(new GetStageDataReq() { }, CmdId.GetStageDataReq));
 
                 Rsp.PlayerExpReward = 100;
                 Rsp.AvatarExpReward = DecodedBody.AvatarExpReward;

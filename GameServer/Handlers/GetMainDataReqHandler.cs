@@ -1,5 +1,6 @@
 ﻿using Common.Database;
 using Common.Resources.Proto;
+using Common.Utils.ExcelReader;
 
 namespace PemukulPaku.GameServer.Handlers
 {
@@ -10,17 +11,50 @@ namespace PemukulPaku.GameServer.Handlers
         {
             UserScheme User = session.Player.User;
 
+            PlayerLevelData.LevelData levelData = PlayerLevelData.GetInstance().CalculateLevel(User.Exp);
+
             GetMainDataRsp Rsp = new()
             {
                 retcode = GetMainDataRsp.Retcode.Succ,
                 AssistantAvatarId = (uint)User.AssistantAvatarId,
                 Birthday = (uint)User.BirthDate,
                 Nickname = User.Nick,
-                Level = 4,
-                Exp = (uint)User.Exp,
+                Level = (uint)levelData.Level,
+                Exp = (uint)levelData.Exp,
                 FreeHcoin = (uint)User.Hcoin,
                 Hcoin = (uint)User.Hcoin,
-                CustomHeadId = 161001
+                CustomHeadId = 161001,
+                Scoin = session.Player.Equipment.MaterialList.Where(mat => mat.Id == 100).FirstOrDefault()?.Num ?? 0,
+                IsAll = true,
+                RegisterTime = (uint)User.Id.Timestamp,
+                PayHcoin = 0,
+                WarshipAvatar = User.WarshipAvatar,
+                SelfDesc = User.SelfDesc,
+                UseFrameId = 200001,
+                OnPhonePendantId = 350005,
+                Stamina = (uint)User.Stamina,
+                StaminaRecoverConfigTime = 360,
+                StaminaRecoverLeftTime = 0,
+                EquipmentSizeLimit = 1000,
+                OpenPanelActivityLists = new uint[] { 2 },
+                ChatworldActivityInfo = new()
+                {
+                    IsHasNpcRedEnvelope = true,
+                    TreasureScheduleId = 1
+                },
+                IsAllowCostSeniorEquipOnCurDevice = true,
+                TypeLists = new uint[] { 2, 3, 4, 5, 6, 7, 8, 9, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 28, 29, 30, 31, 32, 33, 35, 36, 37, 38, 39 },
+                LevelLockId = 1,
+                Mcoin = 0,
+                MonthRechargePrice = 0,
+                WarshipTheme = new ()
+                {
+                    WarshipId = (uint)User.WarshipId
+                },
+                TotalLoginDays = 1,
+                NextEvaluateTime = 0,
+                OnMedalId = 0,
+                TodayRechargePrice = 0,
             };
 
             session.Send(Packet.FromProto(Rsp, CmdId.GetMainDataRsp));
