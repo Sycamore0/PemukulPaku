@@ -26,7 +26,7 @@ namespace PemukulPaku.GameServer.Handlers
                 CustomHeadId = 161001,
                 Scoin = session.Player.Equipment.MaterialList.Where(mat => mat.Id == 100).FirstOrDefault()?.Num ?? 0,
                 IsAll = true,
-                RegisterTime = (uint)User.Id.Timestamp,
+                RegisterTime = User.GetCreationTime(),
                 PayHcoin = 0,
                 WarshipAvatar = User.WarshipAvatar,
                 SelfDesc = User.SelfDesc,

@@ -13,7 +13,7 @@ namespace PemukulPaku.GameServer.Handlers
             GetPlayerTokenRsp Rsp = new () { };
             UserScheme? CurrentUser = User.FromToken(Packet.AccountToken);
 
-            if (CurrentUser == null || CurrentUser.Uid != uint.Parse(Packet.AccountUid))
+            if (CurrentUser is null || CurrentUser.Uid != uint.Parse(Packet.AccountUid))
             {
                 Rsp.retcode = GetPlayerTokenRsp.Retcode.AccountVerifyError;
                 Rsp.Msg = "Account verification failed, please re-login!";
