@@ -1,0 +1,17 @@
+﻿using Common.Resources.Proto;
+using Common.Utils;
+using ProtoBuf;
+
+namespace PemukulPaku.GameServer.Handlers
+{
+    [PacketCmdId(CmdId.GetWorldMapDataReq)]
+    internal class GetWorldMapDataReqHandler : IPacketHandler
+    {
+        public void Handle(Session session, Packet packet)
+        {
+            MemoryStream ms = new(Misc.StringToByteArray("0800121c080110c0c4f4eb0418bffbaad60720002800300038c0c4f4eb044001121c080210c0c4f4eb0418bffbaad60720002800300038c0c4f4eb044002121c080310c0c4f4eb0418bffbaad6072019281e300038c0c4f4eb044003121c080410c0c4f4eb0418bffbaad60720002800300138c0c4f4eb044004121c080510c0c4f4eb0418bffbaad60720002800300138c0c4f4eb044005121c080610c0c4f4eb0418bffbaad607200f2858300138c0c4f4eb044006121c080710c0c4f4eb0418bffbaad607201e2828300138c0c4f4eb044007121c080810c0c4f4eb0418bffbaad60720002800300138c0c4f4eb044008121c080910c0c4f4eb0418bffbaad60720002800300138c0c4f4eb044009121c080a10c0c4f4eb0418bffbaad60720002800300138c0c4f4eb04400a121c080b10c0c4f4eb0418bffbaad60720002800300138c0c4f4eb04400b121c080c10c0c4f4eb0418bffbaad60720002800300138c0c4f4eb044031121e08bb1010a099aae90518bffbaad6072014286330cd0138a099aae9054079121d081210c0c4f4eb0418bffbaad60720322863300138c0c4f4eb04409e02121e08ad1110a092c3800618bffbaad607200f2858300138a092c3800640b302121e08db1110c0e494a30618bfa2f2a40620002800307a38c0e494a306408103"));
+            GetWorldMapDataRsp Rsp = Serializer.Deserialize<GetWorldMapDataRsp>(ms);
+            session.Send(Packet.FromProto(Rsp, CmdId.GetWorldMapDataRsp));
+        }
+    }
+}

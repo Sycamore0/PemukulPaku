@@ -14,7 +14,7 @@ namespace PemukulPaku.GameServer.Handlers
                 Id = 581,
                 LoginDays = 1,
                 AcceptTime = session.Player.User.GetCreationTime(),
-                DurationEndTime = session.Player.User.GetCreationTime() + 604800
+                DurationEndTime = session.Player.User.GetCreationTime() + 604800 * 2
             });
 
             session.Send(Packet.FromProto(Rsp, CmdId.GetLoginActivityRsp));

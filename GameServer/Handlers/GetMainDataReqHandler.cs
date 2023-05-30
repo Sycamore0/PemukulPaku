@@ -39,8 +39,8 @@ namespace PemukulPaku.GameServer.Handlers
                 OpenPanelActivityLists = new uint[] { 2 },
                 ChatworldActivityInfo = new()
                 {
-                    IsHasNpcRedEnvelope = true,
-                    TreasureScheduleId = 1
+                    IsHasNpcRedEnvelope = false,
+                    TreasureScheduleId = 0
                 },
                 IsAllowCostSeniorEquipOnCurDevice = true,
                 TypeLists = new uint[] { 2, 3, 4, 5, 6, 7, 8, 9, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 28, 29, 30, 31, 32, 33, 35, 36, 37, 38, 39 },

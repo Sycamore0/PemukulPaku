@@ -11,6 +11,7 @@ namespace PemukulPaku.GameServer
         public readonly string Id;
         public readonly TcpClient Client;
         public readonly Logger c;
+        public long LastKeepAlive = Global.GetUnixInSeconds();
         public Player Player = default!;
 
         public Session(string id, TcpClient client)
@@ -82,6 +83,7 @@ namespace PemukulPaku.GameServer
         public void ProcessPacket(Packet _packet)
         {
             string PacketName = Enum.GetName(typeof(CmdId), _packet.CmdId)!;
+            if(PacketName == "KeepAliveNotify") { LastKeepAlive = Global.GetUnixInSeconds(); c.Log(PacketName); return; }
             try
             {
                 CmdId cmdId = (CmdId)Enum.ToObject(typeof(CmdId), _packet.CmdId);
