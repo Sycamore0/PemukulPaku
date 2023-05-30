@@ -11,7 +11,8 @@ namespace PemukulPaku.GameServer
         public readonly string Id;
         public readonly TcpClient Client;
         public readonly Logger c;
-        public long LastKeepAlive = Global.GetUnixInSeconds();
+        public long LastClientKeepAlive = Global.GetUnixInSeconds();
+        public long LastServerKeepAlive = Global.GetUnixInSeconds();
         public Player Player = default!;
 
         public Session(string id, TcpClient client)
@@ -20,6 +21,7 @@ namespace PemukulPaku.GameServer
             Client = client;
             c = new Logger(Id);
             Task.Run(ClientLoop);
+            new Thread(KeepAliveLoop).Start();
         }
 
         private void ClientLoop()
@@ -74,7 +76,25 @@ namespace PemukulPaku.GameServer
                     }
                 }
             }
+        }
 
+        public void KeepAliveLoop()
+        {
+            while(Client.Connected)
+            {
+                try
+                {
+                    Send(Packet.FromProto(new KeepAliveNotify() { }, CmdId.KeepAliveNotify));
+                }
+                catch
+                {
+                    break;
+                }
+                Thread.Sleep(3000);
+            }
+
+            Player.SaveAll();
+            c.Debug("Player data saved to database");
             c.Warn($"{Id} disconnected");
             Server.GetInstance().Sessions.Remove(Id);
             Server.GetInstance().LogClients();
@@ -83,7 +103,7 @@ namespace PemukulPaku.GameServer
         public void ProcessPacket(Packet _packet)
         {
             string PacketName = Enum.GetName(typeof(CmdId), _packet.CmdId)!;
-            if(PacketName == "KeepAliveNotify") { LastKeepAlive = Global.GetUnixInSeconds(); c.Log(PacketName); return; }
+            if(PacketName == "KeepAliveNotify") { LastClientKeepAlive = Global.GetUnixInSeconds(); c.Log(PacketName); return; }
             try
             {
                 CmdId cmdId = (CmdId)Enum.ToObject(typeof(CmdId), _packet.CmdId);

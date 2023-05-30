@@ -25,6 +25,7 @@ namespace PemukulPaku.GameServer.Handlers
                 if(session.Player.User.IsFirstLogin)
                 {
                     AvatarScheme avatar = Common.Database.Avatar.Create(101, session.Player.User.Uid, session.Player.Equipment);
+                    session.Player.AvatarList = session.Player.AvatarList.Append(avatar).ToArray();
                     if ((int)Global.config.VerboseLevel > 0)
                         session.c.Log($"Automatically created avatar with id: {avatar.AvatarId}");
                 }
