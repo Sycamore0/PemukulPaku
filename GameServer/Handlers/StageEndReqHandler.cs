@@ -47,7 +47,6 @@ namespace PemukulPaku.GameServer.Handlers
                 session.ProcessPacket(Packet.FromProto(new GetMainDataReq() { }, CmdId.GetMainDataReq));
                 session.ProcessPacket(Packet.FromProto(new GetEquipmentDataReq() { }, CmdId.GetEquipmentDataReq));
                 session.ProcessPacket(Packet.FromProto(new GetWorldMapDataReq() { }, CmdId.GetWorldMapDataReq));
-                session.ProcessPacket(Packet.FromProto(new ChapterGroupGetDataReqHandler() { }, CmdId.ChapterGroupGetDataReq));
                 session.ProcessPacket(Packet.FromProto(new GetStageDataReq() { }, CmdId.GetStageDataReq));
 
                 Rsp.PlayerExpReward = 100;

@@ -25,25 +25,7 @@ namespace PemukulPaku
 
             Player Player = new(User.FromName("test"));
 
-            while (true)
-            {
-                string? line = Console.ReadLine();
-
-                if (!string.IsNullOrEmpty(line))
-                {
-                    foreach (Command cmd in CommandFactory.Commands)
-                    {
-                        if (line.StartsWith(cmd.Name.ToLower()))
-                        {
-                            List<string> args = line.Split(' ').ToList();
-                            args.RemoveAt(0);
-
-                            cmd.Run(null, args.ToArray());
-                            break;
-                        }
-                    }
-                }
-            }
+            ReadLine.GetInstance().Start();
         }
     }
 }

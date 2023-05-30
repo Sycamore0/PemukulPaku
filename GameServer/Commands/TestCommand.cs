@@ -1,11 +1,9 @@
-﻿using Common;
-
-namespace PemukulPaku.GameServer.Commands
+﻿namespace PemukulPaku.GameServer.Commands
 {
-    [CommandHandler("test")]
+    [CommandHandler("test", "Test command used for testing")]
     public class TestCommand : Command
     {
-        public override void Run(Session? session, string[] args)
+        public override void Run(Session session, string[] args)
         {
             if (args.Length < 3)
             {

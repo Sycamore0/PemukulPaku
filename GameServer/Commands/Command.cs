@@ -1,26 +1,74 @@
 ﻿using Common.Utils;
 using System.Reflection;
+using PemukulPaku.GameServer.Game;
 
 namespace PemukulPaku.GameServer.Commands
 {
+    /// <summary>
+    ///  What methods should be overriden based on CommandType:
+    ///  <para>All, Handler should override all virtual methods in Command.</para>
+    ///  <para>Console, Handler should override Run method with string[] args.</para>
+    ///  <para>Player, Handler should override Run method with Player / Session args.</para>
+    /// </summary>
     public abstract class Command
     {
-        public static readonly Logger c = new("Command", ConsoleColor.Cyan);
+        public static readonly Logger c = new("Command", ConsoleColor.Cyan, false);
         public string Name = string.Empty;
+        public string Description = string.Empty;
+        public CommandType CmdType = CommandType.Player;
 
-        public virtual void Run(Session? session, string[] args)
+        /// <summary>
+        /// Call this when player is online or have active session.
+        /// </summary>
+        /// <param name="session">The Session instance</param>
+        /// <exception cref="NotImplementedException"></exception>
+        public virtual void Run(Session session, string[] args)
         {
+            throw new NotImplementedException();
+        }
+        
+        /// <summary>
+        /// Only call this when player have no session.
+        /// </summary>
+        /// <param name="player">The Player instance</param>
+        /// <exception cref="NotImplementedException"></exception>
+        public virtual void Run(Player player, string[] args)
+        {
+            throw new NotImplementedException();
+        }
+        
+        /// <summary>
+        /// Please only call this on ReadLine.
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        public virtual void Run(string[] args)
+        {
+            throw new NotImplementedException();
         }
     }
+
+    /// <summary>
+    /// Command types used to defines what action should be taken by command interpreter or handler.
+    /// </summary>
+    public enum CommandType
+    {
+        All,
+        Console,
+        Player
+    };
 
     [AttributeUsage(AttributeTargets.Class)]
     public class CommandHandler : Attribute
     {
         public string Name { get; }
+        public string Description { get; }
+        public CommandType CmdType { get; }
 
-        public CommandHandler(string name)
+        public CommandHandler(string name, string description, CommandType type = CommandType.Player)
         {
             Name = name;
+            Description = description;
+            CmdType = type;
         }
     }
 
@@ -47,6 +95,8 @@ namespace PemukulPaku.GameServer.Commands
                 if (cmd is not null)
                 {
                     cmd.Name = attr.Name;
+                    cmd.Description = attr.Description;
+                    cmd.CmdType = attr.CmdType;
                     Commands.Add(cmd);
 
 #if DEBUG

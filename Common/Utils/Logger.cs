@@ -5,12 +5,14 @@ namespace Common.Utils
     public class Logger
     {
         private readonly string _name;
+        private readonly bool TraceOnError;
         private readonly ConsoleColor _color;
 
-        public Logger(string name, ConsoleColor color = ConsoleColor.Cyan)
+        public Logger(string name, ConsoleColor color = ConsoleColor.Cyan, bool traceOnError = true)
         {
             _name = name;
             _color = color;
+            TraceOnError = traceOnError;
         }
 
         public void Log(params string[] message)
@@ -44,7 +46,7 @@ namespace Common.Utils
         public void Trail(params string[] msg)
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine($"\t→ {string.Join(' ', msg)}");
+            Console.WriteLine($"\t└── {string.Join(' ', msg)}");
             Console.ResetColor();
         }
 
@@ -59,12 +61,14 @@ namespace Common.Utils
             Console.ResetColor();
             Console.Write("> ");
             Console.ForegroundColor = ConsoleColor.White;
-            Console.BackgroundColor = ConsoleColor.DarkRed;
+            if(TraceOnError)
+                Console.BackgroundColor = ConsoleColor.DarkRed;
             Console.WriteLine(string.Join("\t", message));
             Console.ResetColor();
 #if DEBUG
             StackTrace trace = new(true);
-            Trail(trace.ToString());
+            if(TraceOnError)
+                Trail(trace.ToString());
 #endif
         }
         
