@@ -25,7 +25,7 @@
                     {
                         args.RemoveAt(0);
 
-                        if (Cmd.CmdType == CommandType.All)
+                        if (Cmd.CmdType == CommandType.All || Cmd.CmdType == CommandType.Console)
                         {
                             Cmd.Run(args.ToArray());
                         }

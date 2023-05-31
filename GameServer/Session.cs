@@ -2,6 +2,7 @@
 using Common;
 using Common.Resources.Proto;
 using Common.Utils;
+using PemukulPaku.GameServer.Commands;
 using PemukulPaku.GameServer.Game;
 
 namespace PemukulPaku.GameServer
@@ -96,6 +97,8 @@ namespace PemukulPaku.GameServer
             Player.SaveAll();
             c.Debug("Player data saved to database");
             c.Warn($"{Id} disconnected");
+
+            if (ReadLine.GetInstance().session == this) { ReadLine.GetInstance().session = null; }
             Server.GetInstance().Sessions.Remove(Id);
             Server.GetInstance().LogClients();
         }

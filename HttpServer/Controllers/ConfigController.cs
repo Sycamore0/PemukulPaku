@@ -58,6 +58,30 @@ namespace HttpServer.Controllers
 		            }
 	            });
             });
+            
+            app.Map("/game_weather/weather/get_weather", (HttpContext ctx) =>
+            {
+                Weather weatherData = new()
+                {
+                    Retcode = 0,
+                    Message = "OK",
+                    Data = new()
+                    {
+                        Timezone = 8,
+                        Hourly = new()
+                    }
+                };
+
+                Random random = new();
+                for (int i = 0; i < 24; i++)
+                {
+                    DateTime time = DateTime.Now.Add(TimeSpan.FromHours(1) * i);
+                    weatherData.Data.Hourly.Add(new() { Condition = 1, Date = time.ToString("yyyy-MM-dd"), Hour = time.Hour, Temp = random.Next(20, 30) });
+                }
+
+                ctx.Response.Headers.Add("Content-Type", "application/json");
+                return ctx.Response.WriteAsync(JsonConvert.SerializeObject(weatherData));
+            });
 
             app.Map("/bh3_os/mdk/shield/api/loadConfig", (HttpContext ctx) =>
             {

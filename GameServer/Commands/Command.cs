@@ -9,6 +9,7 @@ namespace PemukulPaku.GameServer.Commands
     ///  <para>All, Handler should override all virtual methods in Command.</para>
     ///  <para>Console, Handler should override Run method with string[] args.</para>
     ///  <para>Player, Handler should override Run method with Player / Session args.</para>
+    ///  <para>When making non console command please call the Run overload with Player from Session overload.</para>
     /// </summary>
     public abstract class Command
     {
