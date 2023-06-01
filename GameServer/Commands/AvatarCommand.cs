@@ -14,8 +14,8 @@ namespace PemukulPaku.GameServer.Commands
             Run(session.Player, args);
 
             session.ProcessPacket(Packet.FromProto(new GetEquipmentDataReq() { }, CmdId.GetEquipmentDataReq));
-            if (avatarId == -1) 
-            { 
+            if (avatarId == -1)
+            {
                 session.ProcessPacket(Packet.FromProto(new GetAvatarDataReq() { AvatarIdLists = new uint[] { 0 } }, CmdId.GetAvatarDataReq));
             }
             else
@@ -32,18 +32,23 @@ namespace PemukulPaku.GameServer.Commands
             switch (action)
             {
                 case "add":
-                    if (avatarId == -1)
+                    if (player.Equipment is not null)
                     {
-                        foreach (AvatarDataExcel avatarData in AvatarData.GetInstance().All)
+                        if (avatarId == -1)
                         {
-                            AvatarScheme avatar = Common.Database.Avatar.Create(avatarData.AvatarId, player.User.Uid, player.Equipment);
+                            foreach (AvatarDataExcel avatarData in AvatarData.GetInstance().All)
+                            {
+                                if (avatarData.AvatarId >= 9000) continue; // Avoid APHO avatars
+
+                                AvatarScheme avatar = Common.Database.Avatar.Create(avatarData.AvatarId, player.User.Uid, player.Equipment);
+                                player.AvatarList = player.AvatarList.Append(avatar).ToArray();
+                            }
+                        }
+                        else
+                        {
+                            AvatarScheme avatar = Common.Database.Avatar.Create(avatarId, player.User.Uid, player.Equipment);
                             player.AvatarList = player.AvatarList.Append(avatar).ToArray();
                         }
-                    }
-                    else
-                    {
-                        AvatarScheme avatar = Common.Database.Avatar.Create(avatarId, player.User.Uid, player.Equipment);
-                        player.AvatarList = player.AvatarList.Append(avatar).ToArray();
                     }
                     player.Equipment.Save();
                     break;
