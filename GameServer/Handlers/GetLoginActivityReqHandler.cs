@@ -1,4 +1,5 @@
-﻿using Common.Resources.Proto;
+﻿using Common.Database;
+using Common.Resources.Proto;
 
 namespace PemukulPaku.GameServer.Handlers
 {
@@ -12,7 +13,7 @@ namespace PemukulPaku.GameServer.Handlers
             Rsp.LoginLists.Add(new LoginActivityData
             {
                 Id = 581,
-                LoginDays = 1,
+                LoginDays = Login.GetUserLoginDays(session.Player.User.Uid),
                 AcceptTime = session.Player.User.GetCreationTime(),
                 DurationEndTime = session.Player.User.GetCreationTime() + 604800 * 2
             });

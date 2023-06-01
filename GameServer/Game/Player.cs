@@ -25,5 +25,13 @@ namespace PemukulPaku.GameServer.Game
                 Avatar.Save();
             }
         }
+
+        public void ResetAvatarsTodayGoodfeel() 
+        {
+            foreach (AvatarScheme avatar in AvatarList)
+            {
+                avatar.TodayHasAddGoodfeel = 0;
+            }
+        }
     }
 }

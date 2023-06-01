@@ -11,6 +11,11 @@ namespace PemukulPaku.GameServer.Handlers
         {
             UserScheme User = session.Player.User;
 
+            if(Login.UserLogin(User.Uid))
+            {
+                session.Player.ResetAvatarsTodayGoodfeel();
+            }
+
             PlayerLoginRsp Rsp = new()
             {
                 retcode = PlayerLoginRsp.Retcode.Succ,

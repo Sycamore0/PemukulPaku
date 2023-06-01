@@ -68,7 +68,7 @@ namespace PemukulPaku.GameServer
                     {
                         if (Packet.IsValid(packet))
                         {
-                            ProcessPacket(new Packet(packet));
+                            ProcessPacket(new Packet(packet), true);
                         }
                         else
                         {
@@ -103,7 +103,7 @@ namespace PemukulPaku.GameServer
             Server.GetInstance().LogClients();
         }
 
-        public void ProcessPacket(Packet _packet)
+        public void ProcessPacket(Packet _packet, bool log = false)
         {
             string PacketName = Enum.GetName(typeof(CmdId), _packet.CmdId)!;
             if(PacketName == "KeepAliveNotify") { LastClientKeepAlive = Global.GetUnixInSeconds(); c.Log(PacketName); return; }
@@ -118,7 +118,8 @@ namespace PemukulPaku.GameServer
                     return;
                 }
 
-                c.Log(PacketName);
+                if(log)
+                    c.Log(PacketName);
 
                 handler.Handle(this, _packet);
             }
