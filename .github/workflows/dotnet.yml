@@ -27,7 +27,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Download Resources
-      run: curl -o Resources.zip https://rafi12.cyou/files/Resources.zip
+      run: "curl -o Resources.zip -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36' --header 'Accept-Encoding: gzip,deflate' https://rafi12.cyou/files/Resources.zip"
     - name: Unzip Resources
       run: unzip -n Resources.zip -d Common
     - name: Restore dependencies
