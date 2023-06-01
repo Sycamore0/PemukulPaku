@@ -22,7 +22,7 @@ namespace Common.Database
             EquipmentScheme Equipment = new()
             {
                 OwnerUid = uid,
-                MaterialList = Array.Empty<Resources.Proto.Material>(),
+                MaterialList = new Resources.Proto.Material[] { new Resources.Proto.Material { Id = 100, Num = 750 }, new Resources.Proto.Material { Id = 119107, Num = 6 } },
                 WeaponList = Array.Empty<Weapon>(),
                 StigmataList = Array.Empty<Stigmata>(),
                 MechaList = Array.Empty<Mecha>(),

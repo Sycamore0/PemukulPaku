@@ -25,19 +25,25 @@
                     {
                         args.RemoveAt(0);
 
-                        if (Cmd.CmdType == CommandType.All || Cmd.CmdType == CommandType.Console)
+                        try
                         {
-                            Cmd.Run(args.ToArray());
+                            if (Cmd.CmdType == CommandType.All || Cmd.CmdType == CommandType.Console)
+                            {
+                                Cmd.Run(args.ToArray());
+                            }
+                            else if(session != null)
+                            {
+                                Cmd.Run(session, args.ToArray());
+                                Command.c.Log("Command executed");
+                            }
+                            else
+                            {
+                                Command.c.Error("Invalid usage, try selecting session first with target");
+                            }
                         }
-                        else if(session != null)
+                        catch (Exception ex)
                         {
-
-                            Command.c.Log("Command executed");
-                        }
-                        else
-                        {
-                            Command.c.Error("Invalid usage, try selecting session first with target");
-                            continue;
+                            Command.c.Error(ex.Message);
                         }
 
                         continue;

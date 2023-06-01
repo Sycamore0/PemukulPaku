@@ -27,13 +27,13 @@ namespace Common.Utils.ExcelReader
             int level = 1;
             int expRemain = exp;
 
-            foreach (var levelData in All)
+            foreach (PlayerLevelDataExcel levelData in All)
             {
                 if(expRemain < 1)
                 {
                     break;
                 }
-                else if(expRemain > levelData.Exp)
+                else if(expRemain >= levelData.Exp)
                 {
                     level++;
                     expRemain -= levelData.Exp;
@@ -41,6 +41,26 @@ namespace Common.Utils.ExcelReader
             }
 
             return new LevelData(level, expRemain);
+        }
+
+        public LevelData CalculateExpForLevel(int level)
+        {
+            int exp = 0;
+
+            foreach (PlayerLevelDataExcel levelData in All)
+            {
+                if (levelData.Level >= level)
+                {
+                    break;
+                }else
+                {
+                    exp += levelData.Exp;
+                    continue;
+                }
+
+            }
+
+            return new LevelData(level, exp);
         }
     }
 
