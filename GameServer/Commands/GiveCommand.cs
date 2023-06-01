@@ -1,6 +1,7 @@
 ﻿using Common.Database;
 using Common.Resources.Proto;
 using Common.Utils.ExcelReader;
+using MongoDB.Bson;
 using PemukulPaku.GameServer.Game;
 
 namespace PemukulPaku.GameServer.Commands
@@ -25,50 +26,48 @@ namespace PemukulPaku.GameServer.Commands
                 case "avatars":
                 case "characters":
                 case "chars":
-                    if (player.Equipment is not null)
+                    foreach (AvatarDataExcel avatarData in AvatarData.GetInstance().All)
                     {
-                        foreach (AvatarDataExcel avatarData in AvatarData.GetInstance().All)
-                        {
-                            if (avatarData.AvatarId >= 9000) continue; // Avoid APHO avatars
+                        if (avatarData.AvatarId >= 9000) continue; // Avoid APHO avatars
 
-                            AvatarScheme avatar = Common.Database.Avatar.Create(avatarData.AvatarId, player.User.Uid, player.Equipment);
-                            player.AvatarList = player.AvatarList.Append(avatar).ToArray();
-                        }
+                        AvatarScheme avatar = Common.Database.Avatar.Create(avatarData.AvatarId, player.User.Uid, player.Equipment);
+                        player.AvatarList = player.AvatarList.Append(avatar).ToArray();
                     }
                     break;
                 case "weapons":
-                    if (player.Equipment is not null)
+                    foreach (WeaponDataExcel weaponData in WeaponData.GetInstance().All)
                     {
-                        foreach (WeaponDataExcel weaponData in WeaponData.GetInstance().All)
-                        {
-                            player.Equipment.AddWeapon(weaponData.Id);
-                        }
+                        player.Equipment.AddWeapon(weaponData.Id);
                     }
                     break;
                 case "stigmata":
                 case "stigs":
-                    if (player.Equipment is not null)
+                    foreach (StigmataDataExcel stigmataData in StigmataData.GetInstance().All)
                     {
-                        foreach (StigmataDataExcel stigmataData in StigmataData.GetInstance().All)
-                        {
-                            player.Equipment.AddStigmata(stigmataData.Id);
-                        }
+                        player.Equipment.AddStigmata(stigmataData.Id);
                     }
                     break;
-                /*
-                 * TODO: Needs MaterialDataExcel implementation
                 case "materials":
                 case "matz":
-                    if (player.Equipment is not null)
+                    foreach (MaterialDataExcel materialData in MaterialData.GetInstance().All)
                     {
-                        foreach (MaterialDataExcel materialData in MaterialData.GetInstance().All)
-                        {
-                            player.Equipment.AddMaterial(materialData.Id, 9999999);
-                        }
+                        player.Equipment.AddMaterial(materialData.Id, 9999999);
                     }
                     break;
-                */
-                case "dress": // TODO: Needs DressDataExcel implementation
+                case "dress":
+                    foreach (DressDataExcel dressData in DressData.GetInstance().All)
+                    {
+                        foreach (int avatarId in dressData.AvatarIdList)
+                        {
+                            AvatarScheme? avatar = player.AvatarList.ToList().Find(av => av.AvatarId == avatarId);
+
+                            if (avatar is not null)
+                            {
+                                avatar.DressLists = avatar.DressLists.Append((uint)dressData.DressId).ToArray();
+                                avatar.Save();
+                            }
+                        }
+                    }
                     break;
                 default:
                     throw new ArgumentException("Unrecognized action");

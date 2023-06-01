@@ -32,23 +32,20 @@ namespace PemukulPaku.GameServer.Commands
             switch (action)
             {
                 case "add":
-                    if (player.Equipment is not null)
+                    if (avatarId == -1)
                     {
-                        if (avatarId == -1)
+                        foreach (AvatarDataExcel avatarData in AvatarData.GetInstance().All)
                         {
-                            foreach (AvatarDataExcel avatarData in AvatarData.GetInstance().All)
-                            {
-                                if (avatarData.AvatarId >= 9000) continue; // Avoid APHO avatars
+                            if (avatarData.AvatarId >= 9000) continue; // Avoid APHO avatars
 
-                                AvatarScheme avatar = Common.Database.Avatar.Create(avatarData.AvatarId, player.User.Uid, player.Equipment);
-                                player.AvatarList = player.AvatarList.Append(avatar).ToArray();
-                            }
-                        }
-                        else
-                        {
-                            AvatarScheme avatar = Common.Database.Avatar.Create(avatarId, player.User.Uid, player.Equipment);
+                            AvatarScheme avatar = Common.Database.Avatar.Create(avatarData.AvatarId, player.User.Uid, player.Equipment);
                             player.AvatarList = player.AvatarList.Append(avatar).ToArray();
                         }
+                    }
+                    else
+                    {
+                        AvatarScheme avatar = Common.Database.Avatar.Create(avatarId, player.User.Uid, player.Equipment);
+                        player.AvatarList = player.AvatarList.Append(avatar).ToArray();
                     }
                     player.Equipment.Save();
                     break;
