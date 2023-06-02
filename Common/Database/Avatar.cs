@@ -71,5 +71,14 @@ namespace Common.Database
         {
             Avatar.collection.ReplaceOne(Builders<AvatarScheme>.Filter.Eq(avatar => avatar.Id, Id), this);
         }
+
+        public PlayerLevelData.LevelData AddExp(uint exp)
+        {
+            PlayerLevelData.LevelData levelData = AvatarLevelData.GetInstance().CalculateLevel((int)(exp + Exp));
+            Level = (uint)levelData.Level;
+            Exp = (uint)levelData.Exp;
+
+            return levelData;
+        }
     }
 }

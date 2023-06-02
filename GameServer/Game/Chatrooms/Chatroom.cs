@@ -25,13 +25,33 @@ namespace PemukulPaku.GameServer.Game.Chatrooms
         {
             string? StringMsg = chatMsg.Content.Items.Where(item => item.MsgStr != null).FirstOrDefault()?.MsgStr;
 
-            if (StringMsg != null) 
-            { 
+            if (StringMsg != null)
+            {
                 // do we need cmds?
-                Command? Cmd = CommandFactory.Commands.Find(cmd => StringMsg.Split(' ').ToList()[0] == cmd.Name.ToLower());
+                List<string> args = StringMsg.Split(' ').ToList();
+                Command? Cmd = CommandFactory.Commands.Find(cmd => args[0] == cmd.Name.ToLower());
                 if (Cmd != null)
                 {
+                    args.RemoveAt(0);
 
+                    try
+                    {
+                        if (Cmd.CmdType == CommandType.All || Cmd.CmdType == CommandType.Player)
+                        {
+                            Cmd.Run(session, args.ToArray());
+                            if (Cmd.CmdType == CommandType.Player)
+                                SendAiMsg("Command executed", session);
+                        }
+                        else
+                        {
+                            SendAiMsg("Invalid usage", session);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SendAiMsg(ex.Message, session);
+                    }
+                    return;
                 }
 
                 chatMsg.CheckResult = new()
@@ -66,6 +86,40 @@ namespace PemukulPaku.GameServer.Game.Chatrooms
 
                 session.Send(Packet.FromProto(notify, CmdId.RecvChatMsgNotify));
             }
+        }
+
+        public void SendAiMsg(string msg, Session? session)
+        {
+            if(session == null)
+            {
+                foreach (Session valSession in Members)
+                {
+                    SendAiMsg(msg, valSession);
+                }
+                return;
+            }
+                
+
+            RecvChatMsgNotify notify = new() { };
+            ChatMsg AiMsg = new()
+            {
+                Uid = 0,
+                Nickname = "Ai-chan",
+                Time = (uint)Global.GetUnixInSeconds(),
+                Msg = msg,
+                Content = new() { },
+                Channel = ChatMsg.MsgChannel.World,
+                AvatarId = 3201,
+                DressId = 593201,
+                FrameId = 200001,
+                CustomHeadId = 161080,
+                CheckResult = new() { NumberCheck = 0, ShieldType = 0, RewriteText = msg }
+            };
+            AiMsg.Content.Items.Add(new() { MsgStr = msg });
+
+            notify.ChatMsgLists.Add(AiMsg);
+
+            session.Send(Packet.FromProto(notify, CmdId.RecvChatMsgNotify));
         }
     }
 

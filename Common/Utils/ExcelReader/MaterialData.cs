@@ -5,6 +5,11 @@ namespace Common.Utils.ExcelReader
     public class MaterialData : BaseExcelReader<MaterialData, MaterialDataExcel>
     {
         public override string FileName { get { return "MaterialData.json"; } }
+
+        public MaterialDataExcel? FromId(uint id)
+        {
+            return All.Where(material => material.Id == id).FirstOrDefault();
+        }
     }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
