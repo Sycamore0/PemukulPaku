@@ -38,7 +38,12 @@ namespace PemukulPaku.GameServer.Handlers
                         TouchGoodfeel = avatar.TouchGoodfeel,
                         WeaponUniqueId = avatar.WeaponUniqueId
                     };
-                    a.SkillLists.AddRange(avatar.SkillLists);
+                    a.SkillLists.AddRange(avatar.SkillLists.Select(skill =>
+                    {
+                        AvatarSkill avatarSkill = new() { SkillId = skill.SkillId };
+                        avatarSkill.SubSkillLists.AddRange(skill.SubSkillLists);
+                        return avatarSkill;
+                    }));
 
                     return a;
                 });
@@ -70,7 +75,12 @@ namespace PemukulPaku.GameServer.Handlers
                         TouchGoodfeel = avatar.TouchGoodfeel,
                         WeaponUniqueId = avatar.WeaponUniqueId
                     };
-                    a.SkillLists.AddRange(avatar.SkillLists);
+                    a.SkillLists.AddRange(avatar.SkillLists.Select(skill =>
+                    {
+                        AvatarSkill avatarSkill = new() { SkillId = skill.SkillId };
+                        avatarSkill.SubSkillLists.AddRange(skill.SubSkillLists);
+                        return avatarSkill;
+                    }));
 
                     return a;
                 });

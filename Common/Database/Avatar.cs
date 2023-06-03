@@ -1,5 +1,6 @@
 ﻿using Common.Resources.Proto;
 using Common.Utils.ExcelReader;
+using Newtonsoft.Json;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -11,7 +12,7 @@ namespace Common.Database
 
         public static AvatarScheme[] AvatarsFromUid(uint uid)
         {
-            return collection.AsQueryable().Where(collection=> collection.OwnerUid == uid).ToArray();
+            return collection.AsQueryable().Where(collection => collection.OwnerUid == uid).ToArray();
         }
 
         public static AvatarScheme Create(int avatarId, uint uid, EquipmentScheme equipment)
@@ -40,7 +41,8 @@ namespace Common.Database
                 SubStar = 0,
                 TouchGoodfeel = 0,
                 TodayHasAddGoodfeel = 0,
-                WeaponUniqueId = weapon.UniqueId
+                WeaponUniqueId = weapon.UniqueId,
+                SkillLists = new()
             };
 
             if(avatarData.AvatarId == 101)
@@ -54,18 +56,25 @@ namespace Common.Database
                 avatar.StigmataUniqueId3 = defaultStigmata3.UniqueId;
             }
 
-            avatar.SkillLists.AddRange(avatarData.SkillList.Select(skillId => new AvatarSkill { SkillId = (uint)skillId }));
+            avatar.SkillLists.AddRange(avatarData.SkillList.Select(skillId => new AvatarScheme.AvatarSkill { SkillId = (uint)skillId }));
 
             collection.InsertOne(avatar);
 
             return avatar;
         }
-
     }
+
     public class AvatarScheme : Resources.Proto.Avatar
     {
+        public class AvatarSkill : Resources.Proto.AvatarSkill
+        {
+            public new List<AvatarSubSkill> SubSkillLists { get; set; } = new();
+        }
+
         public ObjectId Id { get; set; }
         public uint OwnerUid { get; set; }
+        public new List<AvatarSkill> SkillLists { get; set; } = new();
+
 
         public void Save()
         {
@@ -79,6 +88,40 @@ namespace Common.Database
             Exp = (uint)levelData.Exp;
 
             return levelData;
+        }
+
+        public void LevelUpSkill(uint subSkillId, bool isLevelUpAll = false)
+        {
+            AvatarSubSkillDataExcel? subSkillData = AvatarSubSkillData.GetInstance().FromId((int)subSkillId);
+            if (subSkillData is null)
+                return;
+
+            AvatarSkill? avatarSkill = SkillLists.Where(skill => skill.SkillId == subSkillData.SkillId).FirstOrDefault();
+            if(avatarSkill is not null)
+            {
+                AvatarSubSkill? avatarSubSkill = avatarSkill.SubSkillLists.FirstOrDefault(skill => skill.SubSkillId == subSkillData.AvatarSubSkillId);
+                if (avatarSubSkill is not null)
+                {
+                    if (isLevelUpAll)
+                    {
+                        avatarSubSkill.Level = (uint)subSkillData.MaxLv;
+                    }
+                    else
+                    {
+                        avatarSubSkill.Level++;
+                    }
+                }
+                else
+                {
+                    avatarSkill.SubSkillLists.Add(new() { SubSkillId = (uint)subSkillData.AvatarSubSkillId, Level = 1, IsMask = false });
+                }
+            }
+            else
+            {
+                AvatarSkill newAvatarSkill = new() { SkillId = (uint)subSkillData.SkillId };
+                newAvatarSkill.SubSkillLists.Add(new() { SubSkillId = (uint)subSkillData.AvatarSubSkillId, Level = 1, IsMask = false });
+                SkillLists.Add(newAvatarSkill);
+            }
         }
     }
 }

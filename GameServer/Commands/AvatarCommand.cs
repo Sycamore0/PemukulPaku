@@ -53,9 +53,14 @@ namespace PemukulPaku.GameServer.Commands
         {
             string action = args[0];
             int avatarId = int.Parse(args[1]);
-            string modType = args[2];
-            int value = int.Parse(args[3]);
-            AvatarScheme? avatar;
+            string modType = "";
+            int value = 0;
+            if (args.Length > 3)
+            {
+                modType = args[2];
+                value = int.Parse(args[3]);
+            }
+            AvatarScheme? avatar = null;
 
             switch (action)
             {
@@ -95,7 +100,7 @@ namespace PemukulPaku.GameServer.Commands
                             avatar.Save();
                         }
                         else
-                            c.Error("Invalid AvatarScheme in avatar modify command");
+                            throw new ArgumentException("Avatar not found");
                     }
                     break;
                 default:
