@@ -84,6 +84,86 @@ namespace Common.Database
             return stigmata;
         }
 
+        public Resources.Proto.Material[] AddWeaponExpByConsumeItem(uint uniqueId, List<EquipmentItem> consumeItemList)
+        {
+            int expAdd = consumeItemList.Select(item =>
+            {
+                MaterialDataExcel? materialData = MaterialData.GetInstance().FromId(item.IdOrUniqueId);
+                if (materialData == null)
+                    return 0;
+
+                int MaterialIndex = MaterialList.ToList().FindIndex(mat => mat.Id == item.IdOrUniqueId);
+                MaterialList[MaterialIndex].Num -= item.Num;
+
+                return materialData.GearExpProvideBase * (int)item.Num;
+            }).Sum();
+            AddWeaponExp(uniqueId, expAdd);
+
+            return MaterialList.Where(material => consumeItemList.Select(item => item.IdOrUniqueId).ToArray().Contains(material.Id)).ToArray();
+        }
+
+        public void AddWeaponExp(uint uniqueId, int exp)
+        {
+            int weaponIndex = WeaponList.ToList().FindIndex(weapon => weapon.UniqueId == uniqueId);
+            if (weaponIndex == -1) return;
+            WeaponDataExcel? weaponData = WeaponData.GetInstance().FromId((int)WeaponList[weaponIndex].Id);
+            if (weaponData is null) return;
+
+            PlayerLevelData.LevelData levelData = EquipmentLevelData.GetInstance().CalculateLevel((int)WeaponList[weaponIndex].Level, (int)WeaponList[weaponIndex].Exp + exp, weaponData.ExpType);
+
+            if(levelData.Level > weaponData.MaxLv)
+            {
+                levelData.Level = weaponData.MaxLv;
+                EquipmentLevelDataExcel? LevelData = EquipmentLevelData.GetInstance().FromLevel(levelData.Level);
+                if (LevelData is null) return;
+
+                levelData.Exp = LevelData.Type1[weaponData.ExpType];
+            }
+
+            WeaponList[weaponIndex].Level = (uint)levelData.Level;
+            WeaponList[weaponIndex].Exp = (uint)levelData.Exp;
+        }
+
+        public Resources.Proto.Material[] AddStigmataExpByConsumeItem(uint uniqueId, List<EquipmentItem> consumeItemList)
+        {
+            int expAdd = consumeItemList.Select(item =>
+            {
+                MaterialDataExcel? materialData = MaterialData.GetInstance().FromId(item.IdOrUniqueId);
+                if (materialData == null)
+                    return 0;
+
+                int MaterialIndex = MaterialList.ToList().FindIndex(mat => mat.Id == item.IdOrUniqueId);
+                MaterialList[MaterialIndex].Num -= item.Num;
+
+                return materialData.GearExpProvideBase * (int)item.Num;
+            }).Sum();
+            AddStigmataExp(uniqueId, expAdd);
+
+            return MaterialList.Where(material => consumeItemList.Select(item => item.IdOrUniqueId).ToArray().Contains(material.Id)).ToArray();
+        }
+
+        public void AddStigmataExp(uint uniqueId, int exp)
+        {
+            int stigmataIndex = StigmataList.ToList().FindIndex(stigmata => stigmata.UniqueId == uniqueId);
+            if (stigmataIndex == -1) return;
+            StigmataDataExcel? stigmataData = StigmataData.GetInstance().FromId((int)StigmataList[stigmataIndex].Id);
+            if (stigmataData is null) return;
+
+            PlayerLevelData.LevelData levelData = EquipmentLevelData.GetInstance().CalculateLevel((int)StigmataList[stigmataIndex].Level, (int)StigmataList[stigmataIndex].Exp + exp, stigmataData.ExpType);
+
+            if (levelData.Level > stigmataData.MaxLv)
+            {
+                levelData.Level = stigmataData.MaxLv;
+                EquipmentLevelDataExcel? LevelData = EquipmentLevelData.GetInstance().FromLevel(levelData.Level);
+                if (LevelData is null) return;
+
+                levelData.Exp = LevelData.Type1[stigmataData.ExpType];
+            }
+
+            StigmataList[stigmataIndex].Level = (uint)levelData.Level;
+            StigmataList[stigmataIndex].Exp = (uint)levelData.Exp;
+        }
+
         public Resources.Proto.Material AddMaterial(int materialId, int num = 1)
         {
             int MaterialIndex = Array.FindIndex(MaterialList, material => material.Id == materialId);

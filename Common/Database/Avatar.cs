@@ -74,7 +74,7 @@ namespace Common.Database
 
         public PlayerLevelData.LevelData AddExp(uint exp)
         {
-            PlayerLevelData.LevelData levelData = AvatarLevelData.GetInstance().CalculateLevel((int)(exp + Exp));
+            PlayerLevelData.LevelData levelData = AvatarLevelData.GetInstance().CalculateLevel((int)Level, (int)(exp + Exp));
             Level = (uint)levelData.Level;
             Exp = (uint)levelData.Exp;
 

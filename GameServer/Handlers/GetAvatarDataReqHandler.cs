@@ -1,5 +1,4 @@
-﻿using Common.Database;
-using Common.Resources.Proto;
+﻿using Common.Resources.Proto;
 
 namespace PemukulPaku.GameServer.Handlers
 {
@@ -9,7 +8,6 @@ namespace PemukulPaku.GameServer.Handlers
         public void Handle(Session session, Packet packet)
         {
             GetAvatarDataReq Packet = packet.GetDecodedBody<GetAvatarDataReq>();
-            LoginScheme LastLogin = Login.GetUserLastLogin(session.Player.User.Uid);
 
             GetAvatarDataRsp Rsp = new()
             {
@@ -18,9 +16,9 @@ namespace PemukulPaku.GameServer.Handlers
 
             if (Packet.AvatarIdLists.Contains((uint)0))
             {
-                IEnumerable<Common.Resources.Proto.Avatar> Avatars = session.Player.AvatarList.Select(avatar =>
+                IEnumerable<Avatar> Avatars = session.Player.AvatarList.Select(avatar =>
                 {
-                    Common.Resources.Proto.Avatar a = new()
+                    Avatar a = new()
                     {
                         AvatarId = avatar.AvatarId,
                         AvatarArtifact = avatar.AvatarArtifact,
@@ -50,9 +48,9 @@ namespace PemukulPaku.GameServer.Handlers
             }
             else
             {
-                IEnumerable<Common.Resources.Proto.Avatar> Avatars = session.Player.AvatarList.Where(avatar => Packet.AvatarIdLists.Contains(avatar.AvatarId)).Select(avatar =>
+                IEnumerable<Avatar> Avatars = session.Player.AvatarList.Where(avatar => Packet.AvatarIdLists.Contains(avatar.AvatarId)).Select(avatar =>
                 {
-                    Common.Resources.Proto.Avatar a = new()
+                    Avatar a = new()
                     {
                         AvatarId = avatar.AvatarId,
                         AvatarArtifact = avatar.AvatarArtifact,

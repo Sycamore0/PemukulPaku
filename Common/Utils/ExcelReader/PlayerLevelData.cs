@@ -10,7 +10,7 @@ namespace Common.Utils.ExcelReader
             return All.Where(levelData => levelData.Level == level).FirstOrDefault();
         }
 
-        public readonly struct LevelData
+        public struct LevelData
         {
             public LevelData(int level, int exp)
             {
@@ -18,8 +18,8 @@ namespace Common.Utils.ExcelReader
                 Exp = exp;
             }
 
-            public int Level { get; init; }
-            public int Exp { get; init; }
+            public int Level { get; set; }
+            public int Exp { get; set; }
         }
 
         public LevelData CalculateLevel(int exp)

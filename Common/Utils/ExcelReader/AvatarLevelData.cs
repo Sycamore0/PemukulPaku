@@ -6,12 +6,11 @@ namespace Common.Utils.ExcelReader
     {
         public override string FileName { get { return "AvatarLevelData.json"; } }
 
-        public PlayerLevelData.LevelData CalculateLevel(int exp)
+        public PlayerLevelData.LevelData CalculateLevel(int level, int exp)
         {
-            int level = 1;
             int expRemain = exp;
 
-            foreach (AvatarLevelDataExcel levelData in All)
+            foreach (AvatarLevelDataExcel levelData in All.Where(levelData => levelData.Level >= level))
             {
                 if (expRemain < 1)
                 {
