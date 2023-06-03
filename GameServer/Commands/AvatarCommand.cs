@@ -91,7 +91,7 @@ namespace PemukulPaku.GameServer.Commands
                         avatar = player.AvatarList.FirstOrDefault(av => av.AvatarId == avatarId);
                         if (avatar is not null)
                         {
-                            avatar.GetType()?.GetProperty(modType)?.SetValue(avatar, value, null);
+                            avatar.GetType()?.GetProperty(modType)?.SetValue(avatar, (uint)value, null);
                             avatar.Save();
                         }
                         else
