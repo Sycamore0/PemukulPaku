@@ -41,7 +41,12 @@ namespace PemukulPaku.GameServer.Handlers
                     Equipment.AddMaterial((int)DropItem.ItemId, (int)DropItem.Num);
                 }
 
-                session.Player.User.Hcoin += DecodedBody.ChallengeIndexLists.Length * 5;
+                if(DecodedBody.ChallengeIndexLists is not null)
+                {
+                    session.Player.User.Hcoin += DecodedBody.ChallengeIndexLists.Length * 5;
+                    Rsp.ChallengeLists.AddRange(DecodedBody.ChallengeIndexLists.Select(challengeIndex => new StageChallengeData() { ChallengeIndex = challengeIndex, Reward = new() { Hcoin = 5 } }));
+                }
+
                 session.Player.User.Exp += 100;
 
                 session.ProcessPacket(Packet.FromProto(new GetMainDataReq() { }, CmdId.GetMainDataReq));
@@ -52,7 +57,6 @@ namespace PemukulPaku.GameServer.Handlers
                 Rsp.PlayerExpReward = 100;
                 Rsp.AvatarExpReward = DecodedBody.AvatarExpReward;
                 Rsp.ScoinReward = DecodedBody.ScoinReward;
-                Rsp.ChallengeLists.AddRange(DecodedBody.ChallengeIndexLists.Select(challengeIndex => new StageChallengeData() { ChallengeIndex = challengeIndex, Reward = new() { Hcoin = 5 } }));
             }
 
             session.Send(Packet.FromProto(Rsp, CmdId.StageEndRsp));
