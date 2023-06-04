@@ -1,4 +1,5 @@
-﻿using Common.Utils;
+﻿using System.Reflection;
+using Common.Utils;
 using Config.Net;
 using MongoDB.Driver;
 
@@ -23,16 +24,16 @@ namespace Common
         bool UseLocalCache { get; set; }
 
         [Option(DefaultValue = true)]
-        bool CreateAccountOnLoginAttempt { get; }
+        bool CreateAccountOnLoginAttempt { get; set; }
 
         [Option(DefaultValue = "mongodb://127.0.0.1:27017/PemukulPaku")]
         string DatabaseUri { get; set; }
 
         [Option]
-        IGameserver Gameserver { get; }
+        IGameserver Gameserver { get; set; }
 
         [Option]
-        IHttp Http { get; }
+        IHttp Http { get; set; }
 
         public interface IGameserver
         {
@@ -40,20 +41,20 @@ namespace Common
             public string Host { get; set; }
 
             [Option(DefaultValue = (uint)(16100))]
-            public uint Port { get; }
+            public uint Port { get; set; }
 
             [Option(DefaultValue = "overseas01")]
-            public string RegionName { get; }
+            public string RegionName { get; set; }
         }
 
         public interface IHttp
         {
 
             [Option(DefaultValue = (uint)(80))]
-            public uint HttpPort { get; }
+            public uint HttpPort { get; set; }
 
             [Option(DefaultValue = (uint)(443))]
-            public uint HttpsPort { get; }
+            public uint HttpsPort { get; set; }
         }
     }
 

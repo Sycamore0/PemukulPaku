@@ -24,7 +24,6 @@ namespace HttpServer
             AccountController.AddHandlers(app);
             ConfigController.AddHandlers(app);
 
-            app.UseStaticFiles(new StaticFileOptions() { FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")) });
             app.UseMiddleware<RequestLoggingMiddleware>();
             c.Log($"HTTP server started on port 80 & 443"); // A lie
             app.Run();
