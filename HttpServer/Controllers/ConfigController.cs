@@ -83,7 +83,7 @@ namespace HttpServer.Controllers
                 return ctx.Response.WriteAsync(JsonConvert.SerializeObject(weatherData));
             });
 
-            app.Map("/bh3_os/mdk/shield/api/loadConfig", (HttpContext ctx) =>
+            app.Map("/{game_biz}/mdk/shield/api/loadConfig", (HttpContext ctx) =>
             {
                 return ctx.Response.WriteAsJsonAsync(new
                 {

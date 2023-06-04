@@ -20,13 +20,13 @@ namespace Common
         VerboseLevel VerboseLevel { get; set; }
 
         [Option(DefaultValue = false)]
-        bool UseLocalCache { get; }
+        bool UseLocalCache { get; set; }
 
         [Option(DefaultValue = true)]
         bool CreateAccountOnLoginAttempt { get; }
 
-        [Option(DefaultValue = "mongodb://localhost:27017/PemukulPaku")]
-        string DatabaseUri { get; }
+        [Option(DefaultValue = "mongodb://127.0.0.1:27017/PemukulPaku")]
+        string DatabaseUri { get; set; }
 
         [Option]
         IGameserver Gameserver { get; }
