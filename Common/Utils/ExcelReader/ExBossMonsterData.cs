@@ -1,9 +1,8 @@
-﻿using Common.Utils.ExcelReader;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace PemukulPaku.GameServer.Commands
+namespace Common.Utils.ExcelReader
 {
-    internal class ExBossMonsterData : BaseExcelReader<ExBossMonsterData, ExBossMonsterDataExcel>
+    public class ExBossMonsterData : BaseExcelReader<ExBossMonsterData, ExBossMonsterDataExcel>
     {
         public override string FileName { get { return "ExBossMonsterData.json"; } }
     }

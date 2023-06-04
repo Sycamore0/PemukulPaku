@@ -7,7 +7,9 @@ namespace PemukulPaku.GameServer.Handlers
     {
         public void Handle(Session session, Packet packet)
         {
-            session.Send(Packet.FromProto(new GetGodWarRsp() { retcode = GetGodWarRsp.Retcode.Succ }, CmdId.GetGodWarRsp));
+            GetGodWarRsp Rsp = new() { retcode = GetGodWarRsp.Retcode.Succ };
+
+            session.Send(Packet.FromProto(Rsp, CmdId.GetGodWarRsp));
         }
     }
 }
