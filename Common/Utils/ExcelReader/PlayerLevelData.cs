@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Security.Cryptography;
+using Newtonsoft.Json;
 
 namespace Common.Utils.ExcelReader
 {
@@ -41,6 +42,27 @@ namespace Common.Utils.ExcelReader
             }
 
             return new LevelData(level, expRemain);
+        }
+
+        public uint ExBossRankFromExp(int exp)
+        {
+            int UserLevel = CalculateLevel(exp).Level;
+            if (UserLevel >= 81)
+            {
+                return 104;
+            }
+            else if (UserLevel >= 70)
+            {
+                return 103;
+            }
+            else if (UserLevel >= 56)
+            {
+                return 102;
+            }
+            else
+            {
+                return 101;
+            }
         }
 
         public LevelData CalculateExpForLevel(int level)
