@@ -104,6 +104,8 @@ namespace Common.Database
 
         public void AddFragment(uint num) { Fragment += num; }
 
+        public void SetDress(uint dressId) { DressId = dressId; }
+
         public void LevelUpSkill(uint subSkillId, bool isLevelUpAll = false)
         {
             AvatarSubSkillDataExcel? subSkillData = AvatarSubSkillData.GetInstance().FromId((int)subSkillId);
