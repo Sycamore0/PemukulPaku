@@ -90,6 +90,20 @@ namespace Common.Database
             return levelData;
         }
 
+        public void StarUp()
+        {
+            AvatarDataExcel? avatarData = AvatarData.GetInstance().FromId((int)AvatarId);
+            if (avatarData is not null)
+            {
+                AvatarStarType.StarInfo nextStarInfo = AvatarStarType.GetInstance().GetNextStar(avatarData.AvatarType, avatarData.AvatarStarUpType, new((int)Star, (int)SubStar));
+                SubStar = (uint)nextStarInfo.SubStar;
+                Star = (uint)nextStarInfo.Star;
+                Fragment -= (uint)nextStarInfo.Cost;
+            }
+        }
+
+        public void AddFragment(uint num) { Fragment += num; }
+
         public void LevelUpSkill(uint subSkillId, bool isLevelUpAll = false)
         {
             AvatarSubSkillDataExcel? subSkillData = AvatarSubSkillData.GetInstance().FromId((int)subSkillId);

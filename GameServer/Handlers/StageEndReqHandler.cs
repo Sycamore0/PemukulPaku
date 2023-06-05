@@ -47,7 +47,7 @@ namespace PemukulPaku.GameServer.Handlers
                     Rsp.ChallengeLists.AddRange(DecodedBody.ChallengeIndexLists.Select(challengeIndex => new StageChallengeData() { ChallengeIndex = challengeIndex, Reward = new() { Hcoin = 5 } }));
                 }
 
-                session.Player.User.Exp += 100;
+                session.Player.User.AddExp(100);
 
                 session.ProcessPacket(Packet.FromProto(new GetMainDataReq() { }, CmdId.GetMainDataReq));
                 session.ProcessPacket(Packet.FromProto(new GetEquipmentDataReq() { }, CmdId.GetEquipmentDataReq));

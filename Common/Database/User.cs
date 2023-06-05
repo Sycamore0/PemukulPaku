@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using Common.Resources.Proto;
 using MongoDB.Driver;
+using Common.Utils.ExcelReader;
 
 namespace Common.Database
 {
@@ -79,9 +80,19 @@ namespace Common.Database
         {
             User.collection.ReplaceOne(Builders<UserScheme>.Filter.Eq(user => user.Id, Id), this);
         }
+        
         public uint GetCreationTime()
         {
             return (uint)((DateTimeOffset)Id.CreationTime).ToUnixTimeSeconds();
+        }
+        
+        public void AddExp(int exp)
+        {
+            Exp += exp;
+            if (Exp > PlayerLevelData.GetInstance().GetMaxPossibleExp())
+            {
+                Exp = PlayerLevelData.GetInstance().GetMaxPossibleExp();
+            }
         }
     }        
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
