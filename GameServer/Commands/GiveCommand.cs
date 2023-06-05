@@ -1,7 +1,6 @@
 ﻿using Common.Database;
 using Common.Resources.Proto;
 using Common.Utils.ExcelReader;
-using MongoDB.Bson;
 using PemukulPaku.GameServer.Game;
 
 namespace PemukulPaku.GameServer.Commands
@@ -20,6 +19,10 @@ namespace PemukulPaku.GameServer.Commands
         public override void Run(Player player, string[] args)
         {
             string action = args[0];
+            uint value = uint.Parse(args[1]);
+
+            if (value == 0)
+                value = 1;
 
             switch (action)
             {
@@ -37,21 +40,23 @@ namespace PemukulPaku.GameServer.Commands
                 case "weapons":
                     foreach (WeaponDataExcel weaponData in WeaponData.GetInstance().All)
                     {
-                        player.Equipment.AddWeapon(weaponData.Id);
+                        Weapon weapon = player.Equipment.AddWeapon(weaponData.Id);
+                        weapon.Level = value;
                     }
                     break;
                 case "stigmata":
                 case "stigs":
                     foreach (StigmataDataExcel stigmataData in StigmataData.GetInstance().All)
                     {
-                        player.Equipment.AddStigmata(stigmataData.Id);
+                        Stigmata stigmata = player.Equipment.AddStigmata(stigmataData.Id);
+                        stigmata.Level = value;
                     }
                     break;
                 case "materials":
                 case "matz":
                     foreach (MaterialDataExcel materialData in MaterialData.GetInstance().All)
                     {
-                        player.Equipment.AddMaterial(materialData.Id, 9999999);
+                        player.Equipment.AddMaterial(materialData.Id, (int)value);
                     }
                     break;
                 case "dress":
