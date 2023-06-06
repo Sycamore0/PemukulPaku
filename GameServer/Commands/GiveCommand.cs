@@ -1,4 +1,4 @@
-﻿using Common.Database;
+using Common.Database;
 using Common.Resources.Proto;
 using Common.Utils.ExcelReader;
 using PemukulPaku.GameServer.Game;
@@ -19,37 +19,61 @@ namespace PemukulPaku.GameServer.Commands
         public override void Run(Player player, string[] args)
         {
             string action = args[0];
-            uint value = uint.Parse(args[1]);
-
-            if (value == 0)
-                value = 1;
+            uint value = args[1] is not null ? uint.Parse(args[1]):0;
 
             switch (action)
             {
                 case "avatars":
                 case "characters":
                 case "chars":
+                case "valks":
+                case "valkyries":
                     foreach (AvatarDataExcel avatarData in AvatarData.GetInstance().All)
                     {
-                        if (avatarData.AvatarId >= 9000) continue; // Avoid APHO avatars
+                        if (avatarData.AvatarId >= 9000 || avatarData.AvatarId == 316) continue; // Avoid APHO avatars
 
                         AvatarScheme avatar = Common.Database.Avatar.Create(avatarData.AvatarId, player.User.Uid, player.Equipment);
                         player.AvatarList = player.AvatarList.Append(avatar).ToArray();
                     }
                     break;
                 case "weapons":
+                case "weap":
+                case "wep":
+                    foreach (WeaponDataExcel weaponData in WeaponData.GetInstance().All)
+                    {
+                        if (weaponData.EvoId == 0)
+                        {
+                            Weapon weapon = player.Equipment.AddWeapon(weaponData.Id);
+                            weapon.Level = value == 0 ? (uint)weaponData.MaxLv : value;
+                        }
+                    }
+                    break;
+                case "weapons-all":
+                case "weap-all":
+                case "wep-all":
                     foreach (WeaponDataExcel weaponData in WeaponData.GetInstance().All)
                     {
                         Weapon weapon = player.Equipment.AddWeapon(weaponData.Id);
-                        weapon.Level = value;
+                        weapon.Level = value == 0 ? (uint)weaponData.MaxLv : value;
                     }
                     break;
                 case "stigmata":
                 case "stigs":
                     foreach (StigmataDataExcel stigmataData in StigmataData.GetInstance().All)
                     {
+                        if (stigmataData.EvoId == 0)
+                        {
+                            Stigmata stigmata = player.Equipment.AddStigmata(stigmataData.Id);
+                            stigmata.Level = value == 0 ? (uint)stigmataData.MaxLv : value;
+                        }
+                    }
+                    break;
+                case "stigmata-all":
+                case "stigs-all":
+                    foreach (StigmataDataExcel stigmataData in StigmataData.GetInstance().All)
+                    {
                         Stigmata stigmata = player.Equipment.AddStigmata(stigmataData.Id);
-                        stigmata.Level = value;
+                        stigmata.Level = value == 0 ? (uint)stigmataData.MaxLv : value;
                     }
                     break;
                 case "materials":

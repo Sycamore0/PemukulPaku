@@ -1,4 +1,4 @@
-﻿using Common.Resources.Proto;
+using Common.Resources.Proto;
 using Common.Utils.ExcelReader;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -111,7 +111,7 @@ namespace Common.Database
 
             PlayerLevelData.LevelData levelData = EquipmentLevelData.GetInstance().CalculateLevel((int)WeaponList[weaponIndex].Level, (int)WeaponList[weaponIndex].Exp + exp, weaponData.ExpType);
 
-            if(levelData.Level > weaponData.MaxLv)
+            if (levelData.Level > weaponData.MaxLv)
             {
                 levelData.Level = weaponData.MaxLv;
                 EquipmentLevelDataExcel? LevelData = EquipmentLevelData.GetInstance().FromLevel(levelData.Level);
@@ -168,7 +168,7 @@ namespace Common.Database
         {
             int MaterialIndex = Array.FindIndex(MaterialList, material => material.Id == materialId);
 
-            if(MaterialIndex == -1)
+            if (MaterialIndex == -1)
             {
                 MaterialList = MaterialList.Append(new() { Id = (uint)materialId, Num = num < 0 ? 0 : (uint)num }).ToArray();
             }

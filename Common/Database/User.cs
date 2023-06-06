@@ -1,4 +1,4 @@
-﻿using MongoDB.Bson;
+using MongoDB.Bson;
 using Common.Resources.Proto;
 using MongoDB.Driver;
 using Common.Utils.ExcelReader;
@@ -33,6 +33,7 @@ namespace Common.Database
                 },
                 AssistantAvatarId = 101,
                 BirthDate = 0,
+                AbyssDynamicHard = 100,
                 AvatarTeamList = new List<AvatarTeam> { new AvatarTeam { AvatarIdLists = new uint[] { 101 }, StageType = ((uint)StageType.StageStory) } },
                 CustomAvatarTeamList = new List<CustomAvatarTeam> { }
             };
@@ -73,6 +74,7 @@ namespace Common.Database
         public WarshipAvatarData WarshipAvatar { get; set; }
         public int AssistantAvatarId { get; set; }
         public int BirthDate { get; set; }
+        public uint AbyssDynamicHard { get; set; }
         public List<AvatarTeam> AvatarTeamList { get; set; }
         public List<CustomAvatarTeam> CustomAvatarTeamList { get; set; }
 

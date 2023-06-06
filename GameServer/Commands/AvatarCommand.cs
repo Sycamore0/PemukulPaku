@@ -69,7 +69,7 @@ namespace PemukulPaku.GameServer.Commands
                     {
                         foreach (AvatarDataExcel avatarData in AvatarData.GetInstance().All)
                         {
-                            if (avatarData.AvatarId >= 9000) continue; // Avoid APHO avatars
+                            if (avatarData.AvatarId >= 9000 || avatarData.AvatarId == 316 ) continue; // Avoid APHO avatars
 
                             avatar = Common.Database.Avatar.Create(avatarData.AvatarId, player.User.Uid, player.Equipment);
                             player.AvatarList = player.AvatarList.Append(avatar).ToArray();

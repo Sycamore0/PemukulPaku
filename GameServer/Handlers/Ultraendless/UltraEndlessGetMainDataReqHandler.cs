@@ -1,12 +1,14 @@
-﻿using Common;
+using Common;
 using Common.Resources.Proto;
 using Common.Utils.ExcelReader;
+using Common.Database;
 
 namespace PemukulPaku.GameServer.Handlers
 {
     [PacketCmdId(CmdId.UltraEndlessGetMainDataReq)]
     internal class UltraEndlessGetMainDataReqHandler : IPacketHandler
     {
+        
         public void Handle(Session session, Packet packet)
         {
             UltraEndlessGetMainDataRsp Rsp = new()
@@ -25,7 +27,7 @@ namespace PemukulPaku.GameServer.Handlers
                     CloseTime = (uint)Global.GetUnixInSeconds() + 3600 * 24 * 7 + 1200,
                     CurSeasonId = 1
                 },
-                DynamicHardLevel = 430,
+                DynamicHardLevel = session.Player.User.AbyssDynamicHard,
                 LastSettleInfo = new() { }
             };
             Rsp.MainData.SiteLists.AddRange(Common.Utils.ExcelReader.UltraEndlessSite.GetInstance().All.Where(x => x.SiteId > 1019).Select(siteData =>
