@@ -14,7 +14,8 @@ namespace PemukulPaku.GameServer.Handlers
             GetMainDataRsp MainDataRsp = new()
             {
                 retcode = GetMainDataRsp.Retcode.Succ,
-                WarshipTheme = new() { WarshipId = (uint)session.Player.User.WarshipId }
+                WarshipTheme = new() { WarshipId = (uint)session.Player.User.WarshipId },
+                TypeLists = new uint[] { 38 }
             };
             SetWarshipRsp Rsp = new() { retcode = SetWarshipRsp.Retcode.Succ };
 

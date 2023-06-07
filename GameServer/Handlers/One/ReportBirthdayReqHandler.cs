@@ -12,7 +12,8 @@ namespace PemukulPaku.GameServer.Handlers
             GetMainDataRsp mainDataRsp = new()
             {
                 retcode = GetMainDataRsp.Retcode.Succ,
-                Birthday = Data.Birthday
+                Birthday = Data.Birthday,
+                TypeLists = new uint[] { 21 } 
             };
             ReportBirthdayRsp Rsp = new() { retcode = ReportBirthdayRsp.Retcode.Succ };
 

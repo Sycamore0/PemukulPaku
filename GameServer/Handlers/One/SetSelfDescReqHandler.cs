@@ -12,7 +12,8 @@ namespace PemukulPaku.GameServer.Handlers
             GetMainDataRsp mainDataRsp = new()
             {
                 retcode = GetMainDataRsp.Retcode.Succ,
-                SelfDesc = Data.SelfDesc
+                SelfDesc = Data.SelfDesc,
+                TypeLists = new uint[] { 16 }
             };
             SetSelfDescRsp Rsp = new() { retcode = SetSelfDescRsp.Retcode.Succ };
 

@@ -8,7 +8,7 @@ namespace PemukulPaku.GameServer.Handlers
         public void Handle(Session session, Packet packet)
         {
             GetFrameDataRsp Rsp = new() { retcode = GetFrameDataRsp.Retcode.Succ, IsAll = true };
-            Rsp.FrameLists.Add(new FrameData() { Id = 200001 });
+            Rsp.FrameLists.AddRange(Common.Utils.ExcelReader.FrameData.GetInstance().All.Select(x => new FrameData() { Id = (uint)x.Id }));
 
             session.Send(Packet.FromProto(Rsp, CmdId.GetFrameDataRsp));
         }

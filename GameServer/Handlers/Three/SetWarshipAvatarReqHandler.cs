@@ -22,7 +22,8 @@ namespace PemukulPaku.GameServer.Handlers
             GetMainDataRsp MainDataRsp = new()
             {
                 retcode = GetMainDataRsp.Retcode.Succ,
-                WarshipAvatar = session.Player.User.WarshipAvatar
+                WarshipAvatar = session.Player.User.WarshipAvatar,
+                TypeLists = new uint[] { 35 }
             };
 
             session.Send(Packet.FromProto(MainDataRsp, CmdId.GetMainDataRsp), Packet.FromProto(new SetWarshipAvatarRsp() { retcode = SetWarshipAvatarRsp.Retcode.Succ }, CmdId.SetWarshipAvatarRsp));

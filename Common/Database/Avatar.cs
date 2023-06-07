@@ -102,6 +102,77 @@ namespace Common.Database
             }
         }
 
+        public AvatarDetailData ToDetailData(EquipmentScheme equipment)
+        {
+            Weapon? weapon = equipment.WeaponList.Where(x => x.UniqueId == WeaponUniqueId).FirstOrDefault();
+            Stigmata? stigmata1 = equipment.StigmataList.Where(x => x.UniqueId == StigmataUniqueId1).FirstOrDefault();
+            Stigmata? stigmata2 = equipment.StigmataList.Where(x => x.UniqueId == StigmataUniqueId2).FirstOrDefault();
+            Stigmata? stigmata3 = equipment.StigmataList.Where(x => x.UniqueId == StigmataUniqueId3).FirstOrDefault();
+
+            AvatarDetailData detailData = new()
+            {
+                AvatarId = AvatarId,
+                AvatarArtifact = AvatarArtifact,
+                AvatarLevel = Level,
+                AvatarStar = Star,
+                AvatarSubStar = SubStar,
+                DressId = DressId,
+            };
+
+            if (weapon is not null)
+            {
+                detailData.Weapon = new()
+                {
+                    Id = weapon.Id,
+                    Level = weapon.Level,
+                    UniqueId = weapon.UniqueId,
+                    SubWeaponId = weapon.SubWeaponId
+                };
+            }
+
+            if (stigmata1 is not null)
+            {
+                detailData.Stigmata1 = new()
+                {
+                    Id = stigmata1.Id,
+                    Level = stigmata1.Level,
+                    UniqueId = stigmata1.UniqueId
+                };
+                detailData.Stigmata1.RuneLists.AddRange(stigmata1.RuneLists);
+            }
+
+            if (stigmata2 is not null)
+            {
+                detailData.Stigmata2 = new()
+                {
+                    Id = stigmata2.Id,
+                    Level = stigmata2.Level,
+                    UniqueId = stigmata2.UniqueId
+                };
+                detailData.Stigmata2.RuneLists.AddRange(stigmata2.RuneLists);
+            }
+
+            if (stigmata3 is not null)
+            {
+                detailData.Stigmata3 = new()
+                {
+                    Id = stigmata3.Id,
+                    Level = stigmata3.Level,
+                    UniqueId = stigmata3.UniqueId
+                };
+                detailData.Stigmata3.RuneLists.AddRange(stigmata3.RuneLists);
+            }
+
+            detailData.SkillLists.AddRange(SkillLists.Select(x =>
+            {
+                AvatarSkillDetailData skillDetailData = new() { SkillId = x.SkillId };
+                skillDetailData.SubSkillLists.AddRange(x.SubSkillLists.Select(x => new AvatarSubSkillDetailData() { IsMask = x.IsMask, Level = x.Level, SubSkillId = x.SubSkillId }));
+                return skillDetailData;
+            }));
+
+            return detailData;
+        }
+
         public void AddFragment(uint num) { Fragment += num; }
 
         public void SetDress(uint dressId) { DressId = dressId; }

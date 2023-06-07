@@ -9,7 +9,8 @@ namespace PemukulPaku.GameServer.Handlers
         public void Handle(Session session, Packet packet)
         {
             SendChatMsgNotify Data = packet.GetDecodedBody<SendChatMsgNotify>();
-            WorldChatroom.GetInstance().GetChatroom(session).OnSendChat(session, Data.ChatMsg);
+            if (Data.ChatMsg.Channel == ChatMsg.MsgChannel.World)
+                WorldChatroom.GetInstance().GetChatroom(session).OnSendChat(session, Data.ChatMsg);
         }
     }
 }

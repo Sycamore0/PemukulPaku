@@ -70,8 +70,8 @@ namespace PemukulPaku.GameServer.Game.Chatrooms
             chatMsg.Time = (uint)Global.GetUnixInSeconds();
             chatMsg.AvatarId = (uint)User.AssistantAvatarId;
             chatMsg.DressId = session.Player.AvatarList.Where(avatar => avatar.AvatarId == User.AssistantAvatarId).First().DressId;
-            chatMsg.FrameId = 200001;
-            chatMsg.CustomHeadId = 161001;
+            chatMsg.FrameId = User.FrameId < 200001 ? 200001 : (uint)User.FrameId;
+            chatMsg.CustomHeadId = (uint)User.CustomHeadId;
 
             Broadcast(chatMsg);
             Messages.Add(chatMsg);

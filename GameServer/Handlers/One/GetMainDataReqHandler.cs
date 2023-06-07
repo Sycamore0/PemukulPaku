@@ -9,8 +9,8 @@ namespace PemukulPaku.GameServer.Handlers
     {
         public void Handle(Session session, Packet packet)
         {
+            GetMainDataReq Data = packet.GetDecodedBody<GetMainDataReq>();
             UserScheme User = session.Player.User;
-
             PlayerLevelData.LevelData levelData = PlayerLevelData.GetInstance().CalculateLevel(User.Exp);
 
             GetMainDataRsp Rsp = new()
@@ -23,18 +23,18 @@ namespace PemukulPaku.GameServer.Handlers
                 Exp = (uint)levelData.Exp,
                 FreeHcoin = (uint)User.Hcoin,
                 Hcoin = (uint)User.Hcoin,
-                CustomHeadId = 161001,
+                CustomHeadId = (uint)User.CustomHeadId,
                 Scoin = session.Player.Equipment.MaterialList.Where(mat => mat.Id == 100).FirstOrDefault()?.Num ?? 0,
                 IsAll = true,
                 RegisterTime = User.GetCreationTime(),
                 PayHcoin = 0,
                 WarshipAvatar = User.WarshipAvatar,
                 SelfDesc = User.SelfDesc,
-                UseFrameId = 200001,
+                UseFrameId = User.FrameId < 200001 ? 200001 : (uint)User.FrameId,
                 OnPhonePendantId = 350005,
                 Stamina = (uint)User.Stamina,
                 StaminaRecoverConfigTime = 360,
-                StaminaRecoverLeftTime = 0,
+                StaminaRecoverLeftTime = 360,
                 EquipmentSizeLimit = 1000,
                 OpenPanelActivityLists = new uint[] { 2 },
                 ChatworldActivityInfo = new()

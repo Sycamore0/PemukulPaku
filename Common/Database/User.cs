@@ -31,6 +31,8 @@ namespace Common.Database
                     WarshipFirstAvatarId = 101,
                     WarshipSecondAvatarId = 0
                 },
+                CustomHeadId = 161001,
+                FrameId = 200001,
                 AssistantAvatarId = 101,
                 BirthDate = 0,
                 AbyssDynamicHard = 100,
@@ -55,6 +57,12 @@ namespace Common.Database
             return user;
         }
 
+        public static UserScheme? FromUid(uint uid)
+        {
+            UserScheme? user = collection.AsQueryable().Where(d => d.Uid == uid).FirstOrDefault();
+            return user;
+        }
+
     }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -70,6 +78,8 @@ namespace Common.Database
         public string SelfDesc { get; set; }
         public bool IsFirstLogin { get; set; }
         public string Token { get; set; }
+        public int CustomHeadId { get; set; }
+        public int FrameId { get; set; }
         public int WarshipId { get; set; }
         public WarshipAvatarData WarshipAvatar { get; set; }
         public int AssistantAvatarId { get; set; }

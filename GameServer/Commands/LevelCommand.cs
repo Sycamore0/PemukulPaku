@@ -15,7 +15,8 @@ namespace PemukulPaku.GameServer.Commands
             {
                 retcode = GetMainDataRsp.Retcode.Succ,
                 Level = (uint)PlayerLevelData.GetInstance().CalculateLevel(session.Player.User.Exp).Level,
-                Exp = (uint)PlayerLevelData.GetInstance().CalculateLevel(session.Player.User.Exp).Exp
+                Exp = (uint)PlayerLevelData.GetInstance().CalculateLevel(session.Player.User.Exp).Exp,
+                TypeLists = new uint[] { 3, 4 }
             };
             session.Send(Packet.FromProto(Rsp, CmdId.GetMainDataRsp), Packet.FromProto(new PlayerLevelUpNotify() { NewLevel = Rsp.Level }, CmdId.PlayerLevelUpNotify));
         }
