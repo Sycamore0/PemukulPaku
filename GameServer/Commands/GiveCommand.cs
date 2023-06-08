@@ -80,7 +80,7 @@ namespace PemukulPaku.GameServer.Commands
                 case "matz":
                     foreach (MaterialDataExcel materialData in MaterialData.GetInstance().All)
                     {
-                        player.Equipment.AddMaterial(materialData.Id, (int)value);
+                        player.Equipment.AddMaterial(materialData.Id, value == 0 ? 1 : (int)value);
                     }
                     break;
                 case "dress":
