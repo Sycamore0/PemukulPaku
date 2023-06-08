@@ -4,7 +4,7 @@ namespace Common.Utils.ExcelReader
 {
     public class AvatarSkillData : BaseExcelReader<AvatarSkillData, AvatarSkillDataExcel>
     {
-        public override string FileName { get { return "AvatarSubSkillData.json"; } }
+        public override string FileName { get { return "AvatarSkillData.json"; } }
 
         public AvatarSkillDataExcel? FromId(int id)
         {
