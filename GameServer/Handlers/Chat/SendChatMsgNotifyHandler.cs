@@ -1,4 +1,5 @@
-﻿using Common.Resources.Proto;
+﻿using Common.Database;
+using Common.Resources.Proto;
 using PemukulPaku.GameServer.Game.Chatrooms;
 
 namespace PemukulPaku.GameServer.Handlers
@@ -11,6 +12,8 @@ namespace PemukulPaku.GameServer.Handlers
             SendChatMsgNotify Data = packet.GetDecodedBody<SendChatMsgNotify>();
             if (Data.ChatMsg.Channel == ChatMsg.MsgChannel.World)
                 WorldChatroom.GetInstance().GetChatroom(session).OnSendChat(session, Data.ChatMsg);
+            else if (Data.ChatMsg.Channel == ChatMsg.MsgChannel.Private)
+                PrivateChatManager.OnSendChatMsg(session, Data);
         }
     }
 }

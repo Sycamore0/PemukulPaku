@@ -34,7 +34,7 @@ namespace PemukulPaku.GameServer.Handlers
                         }
                     }
                 }
-                stigmata.WaitSelectRuneGroupLists.Clear();
+                stigmata.WaitSelectRuneGroupLists?.Clear();
             }
             session.Player.Equipment.Save();
             session.Send(Packet.FromProto(Rsp, CmdId.SelectNewStigmataRuneRsp));

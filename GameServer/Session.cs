@@ -154,5 +154,10 @@ namespace PemukulPaku.GameServer
         {
             return Id;
         }
+
+        public static Session? FromUid(uint uid)
+        {
+            return Server.GetInstance().Sessions.FirstOrDefault(s => s.Value.Player.User.Uid == uid).Value;
+        }
     }
 }

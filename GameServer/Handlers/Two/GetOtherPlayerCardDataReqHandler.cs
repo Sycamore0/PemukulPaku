@@ -16,7 +16,9 @@ namespace PemukulPaku.GameServer.Handlers.Two
 
             if(user is not null)
             {
-                Player player = new(user);
+                Player? player = Session.FromUid(user.Uid)?.Player;
+                player ??= new(user);
+
                 Rsp.CardData = new()
                 {
                     Uid = player.User.Uid,
