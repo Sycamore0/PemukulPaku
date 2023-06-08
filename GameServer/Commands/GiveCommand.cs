@@ -19,7 +19,7 @@ namespace PemukulPaku.GameServer.Commands
         public override void Run(Player player, string[] args)
         {
             string action = args[0];
-            uint value = args[1] is not null ? uint.Parse(args[1]):0;
+            uint value = (args.Length > 1 && args[1] is not null) ? uint.Parse(args[1]) : 0;
 
             switch (action)
             {
