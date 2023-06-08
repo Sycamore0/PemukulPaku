@@ -1,7 +1,4 @@
-﻿using Common.Database;
-using Common.Resources.Proto;
-using Common.Utils.ExcelReader;
-using PemukulPaku.GameServer.Game;
+﻿using PemukulPaku.GameServer.Game;
 
 namespace PemukulPaku.GameServer.Commands
 {
@@ -12,14 +9,14 @@ namespace PemukulPaku.GameServer.Commands
         {
             Run(session.Player, args);
 
-            //session.ProcessPacket(Packet.FromProto(new UltraEndlessGetMainDataReq() { }, CmdId.UltraEndlessGetMainDataReq));
+            // session.ProcessPacket(Packet.FromProto(new UltraEndlessGetMainDataReq() { }, CmdId.UltraEndlessGetMainDataReq));
         }
         public override void Run(Player player, string[] args)
         {
             string action = args[0];
             uint value = args[1] is not null ? uint.Parse(args[1]) : 0;
 
-            switch (action)
+            switch (action.ToLower())
             {
                 case "temp":
                     player.User.AbyssDynamicHard = value;

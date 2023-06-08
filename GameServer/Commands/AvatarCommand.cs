@@ -2,6 +2,7 @@
 using Common.Resources.Proto;
 using Common.Utils.ExcelReader;
 using PemukulPaku.GameServer.Game;
+using System.Globalization;
 
 namespace PemukulPaku.GameServer.Commands
 {
@@ -25,10 +26,10 @@ namespace PemukulPaku.GameServer.Commands
                 session.ProcessPacket(Packet.FromProto(new GetAvatarDataReq() { AvatarIdLists = new uint[] { (uint)avatarId } }, CmdId.GetAvatarDataReq));
             }
 
-            if (action == "modify")
+            if (action.ToLower() == "modify")
             {
                 List<uint> updatedAvatars = new();
-                
+
                 if (avatarId == -1)
                 {
                     foreach (AvatarScheme av in session.Player.AvatarList)
@@ -61,15 +62,16 @@ namespace PemukulPaku.GameServer.Commands
                 value = int.Parse(args[3]);
             }
             AvatarScheme? avatar = null;
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 
-            switch (action)
+            switch (action.ToLower())
             {
                 case "add":
                     if (avatarId == -1)
                     {
                         foreach (AvatarDataExcel avatarData in AvatarData.GetInstance().All)
                         {
-                            if (avatarData.AvatarId >= 9000 || avatarData.AvatarId == 316 ) continue; // Avoid APHO avatars
+                            if (avatarData.AvatarId >= 9000 || avatarData.AvatarId == 316) continue; // Avoid APHO avatars and scuffed 316
 
                             avatar = Common.Database.Avatar.Create(avatarData.AvatarId, player.User.Uid, player.Equipment);
                             player.AvatarList = player.AvatarList.Append(avatar).ToArray();
@@ -85,9 +87,9 @@ namespace PemukulPaku.GameServer.Commands
                 case "modify":
                     if (avatarId == -1)
                     {
-                        foreach (var av in player.AvatarList)
+                        foreach (AvatarScheme av in player.AvatarList)
                         {
-                            av.GetType()?.GetProperty(modType)?.SetValue(av, (uint)value, null);
+                            av.GetType()?.GetProperty(textInfo.ToTitleCase(modType))?.SetValue(av, (uint)value, null);
                             av.Save();
                         }
                     }
@@ -96,13 +98,41 @@ namespace PemukulPaku.GameServer.Commands
                         avatar = player.AvatarList.FirstOrDefault(av => av.AvatarId == avatarId);
                         if (avatar is not null)
                         {
-                            avatar.GetType()?.GetProperty(modType)?.SetValue(avatar, (uint)value, null);
+                            avatar.GetType()?.GetProperty(textInfo.ToTitleCase(modType))?.SetValue(avatar, (uint)value, null);
                             avatar.Save();
                         }
                         else
                             throw new ArgumentException("Avatar not found");
                     }
                     break;
+                /* broken experiment for an all skills cmd
+                case "allskills":
+                    if (avatarId == -1)
+                    {
+                        foreach (AvatarScheme av in player.AvatarList)
+                        {
+                            foreach (AvatarSubSkillDataExcel subSkillData in AvatarSubSkillData.GetInstance().All)
+                            {
+                                av.LevelUpSkill((uint)subSkillData.AvatarSubSkillId, true);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        avatar = player.AvatarList.FirstOrDefault(av => av.AvatarId == avatarId);
+                        if (avatar is not null)
+                        {
+                            avatar.SkillLists.Clear();
+                            foreach (AvatarScheme.AvatarSkill skill in avatar.SkillLists)
+                            {
+                                avatar.LevelUpSkill(skill.SkillId, true);
+                            }
+                        }
+                        else
+                            throw new ArgumentException("Avatar not found");
+                    }
+                    break;
+                */
                 default:
                     throw new ArgumentException("Unrecognized action");
             }

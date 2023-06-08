@@ -21,7 +21,7 @@ namespace PemukulPaku.GameServer.Commands
             string action = args[0];
             uint value = (args.Length > 1 && args[1] is not null) ? uint.Parse(args[1]) : 0;
 
-            switch (action)
+            switch (action.ToLower())
             {
                 case "avatars":
                 case "characters":
