@@ -4,7 +4,7 @@ using Common.Resources.Proto;
 
 namespace PemukulPaku.GameServer.Commands
 {
-    [CommandHandler("level", "Modify the player captain level", CommandType.Player)]
+    [CommandHandler("level", "<1-88>", CommandType.Player)]
     internal class LevelCommand : Command
     {
         public override void Run(Session session, string[] args)

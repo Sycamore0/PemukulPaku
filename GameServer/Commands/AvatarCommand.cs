@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace PemukulPaku.GameServer.Commands
 {
-    [CommandHandler("avatar", "Add avatar to player account", CommandType.Player)]
+    [CommandHandler("avatar", "<sel> <id> [Prop] [#]", CommandType.Player, "add 406", "modify -1 star 5")]
     internal class AvatarCommand : Command
     {
         public override void Run(Session session, string[] args)
@@ -26,7 +26,7 @@ namespace PemukulPaku.GameServer.Commands
                 session.ProcessPacket(Packet.FromProto(new GetAvatarDataReq() { AvatarIdLists = new uint[] { (uint)avatarId } }, CmdId.GetAvatarDataReq));
             }
 
-            if (action.ToLower() == "modify")
+            if (action.ToLower() == "modify" || action.ToLower() == "mod")
             {
                 List<uint> updatedAvatars = new();
 
@@ -85,6 +85,7 @@ namespace PemukulPaku.GameServer.Commands
                     player.Equipment.Save();
                     break;
                 case "modify":
+                case "mod":
                     if (avatarId == -1)
                     {
                         foreach (AvatarScheme av in player.AvatarList)

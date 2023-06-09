@@ -36,6 +36,7 @@ namespace Common.Database
                 AssistantAvatarId = 101,
                 BirthDate = 0,
                 AbyssDynamicHard = 100,
+                AbyssGroupLevel = 8,
                 AvatarTeamList = new List<AvatarTeam> { new AvatarTeam { AvatarIdLists = new uint[] { 101 }, StageType = ((uint)StageType.StageStory) } },
                 CustomAvatarTeamList = new List<CustomAvatarTeam> { }
             };
@@ -85,6 +86,7 @@ namespace Common.Database
         public int AssistantAvatarId { get; set; }
         public int BirthDate { get; set; }
         public uint AbyssDynamicHard { get; set; }
+        public uint AbyssGroupLevel { get; set; }
         public List<AvatarTeam> AvatarTeamList { get; set; }
         public List<CustomAvatarTeam> CustomAvatarTeamList { get; set; }
 

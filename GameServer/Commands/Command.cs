@@ -1,4 +1,4 @@
-﻿using Common.Utils;
+using Common.Utils;
 using System.Reflection;
 using PemukulPaku.GameServer.Game;
 
@@ -16,6 +16,7 @@ namespace PemukulPaku.GameServer.Commands
         public static readonly Logger c = new("Command", ConsoleColor.Cyan, false);
         public string Name = string.Empty;
         public string Description = string.Empty;
+        public string[] Examples = Array.Empty<string>();
         public CommandType CmdType = CommandType.Player;
 
         /// <summary>
@@ -63,13 +64,15 @@ namespace PemukulPaku.GameServer.Commands
     {
         public string Name { get; }
         public string Description { get; }
+        public string[] Examples { get; }
         public CommandType CmdType { get; }
 
-        public CommandHandler(string name, string description, CommandType type = CommandType.Player)
+        public CommandHandler(string name, string description, CommandType type = CommandType.Player, params string[] examples)
         {
             Name = name;
             Description = description;
             CmdType = type;
+            Examples = examples;
         }
     }
 
@@ -98,6 +101,7 @@ namespace PemukulPaku.GameServer.Commands
                     cmd.Name = attr.Name;
                     cmd.Description = attr.Description;
                     cmd.CmdType = attr.CmdType;
+                    cmd.Examples = attr.Examples;
                     Commands.Add(cmd);
 
 #if DEBUG

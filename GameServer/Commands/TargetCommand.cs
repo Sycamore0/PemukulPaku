@@ -1,6 +1,6 @@
 ﻿namespace PemukulPaku.GameServer.Commands
 {
-    [CommandHandler("target", "Select session target for console command action", CommandType.Console)]
+    [CommandHandler("target", "[id], displays and selects User sessions for commands", CommandType.Console)]
     internal class TargetCommand : Command
     {
         public override void Run(string[] args)

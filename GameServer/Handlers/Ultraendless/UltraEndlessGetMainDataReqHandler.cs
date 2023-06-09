@@ -1,7 +1,6 @@
 using Common;
 using Common.Resources.Proto;
 using Common.Utils.ExcelReader;
-using Common.Database;
 
 namespace PemukulPaku.GameServer.Handlers
 {
@@ -11,11 +10,13 @@ namespace PemukulPaku.GameServer.Handlers
         
         public void Handle(Session session, Packet packet)
         {
+            uint bracket = session.Player.User.AbyssGroupLevel;
+            uint temp = session.Player.User.AbyssDynamicHard;
             UltraEndlessGetMainDataRsp Rsp = new()
             {
                 retcode = UltraEndlessGetMainDataRsp.Retcode.Succ,
                 ScheduleId = 1028,
-                GroupLevel = 9,
+                GroupLevel = bracket,
                 TopGroupLevel = 9,
                 CupNum = 2000,
                 MainData = new()
@@ -27,7 +28,7 @@ namespace PemukulPaku.GameServer.Handlers
                     CloseTime = (uint)Global.GetUnixInSeconds() + 3600 * 24 * 7 + 1200,
                     CurSeasonId = 1
                 },
-                DynamicHardLevel = session.Player.User.AbyssDynamicHard,
+                DynamicHardLevel = temp,
                 LastSettleInfo = new() { }
             };
             Rsp.MainData.SiteLists.AddRange(Common.Utils.ExcelReader.UltraEndlessSite.GetInstance().All.Where(x => x.SiteId > 1019).Select(siteData =>
