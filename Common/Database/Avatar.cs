@@ -195,7 +195,8 @@ namespace Common.Database
                     }
                     else
                     {
-                        avatarSubSkill.Level++;
+                        if (avatarSubSkill.Level < subSkillData.MaxLv)
+                            avatarSubSkill.Level++;
                     }
                 }
                 else

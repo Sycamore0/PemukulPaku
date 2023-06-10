@@ -24,4 +24,8 @@
     <ProjectReference Include="HttpServer\HttpServer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="GameServer\Handlers\Generalactivity\" />
+  </ItemGroup>
+
 </Project>

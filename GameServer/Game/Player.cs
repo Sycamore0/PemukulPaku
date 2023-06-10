@@ -1,4 +1,6 @@
 ﻿using Common.Database;
+using Common.Resources.Proto;
+using Common.Utils.ExcelReader;
 
 namespace PemukulPaku.GameServer.Game
 {
@@ -12,7 +14,7 @@ namespace PemukulPaku.GameServer.Game
         {
             User = user;
             Equipment = Common.Database.Equipment.FromUid(user.Uid);
-            AvatarList = Avatar.AvatarsFromUid(user.Uid);
+            AvatarList = Common.Database.Avatar.AvatarsFromUid(user.Uid);
         }
 
         public void SaveAll()
@@ -32,6 +34,34 @@ namespace PemukulPaku.GameServer.Game
             {
                 avatar.TodayHasAddGoodfeel = 0;
             }
+        }
+
+        public PlayerCardData GetCardData()
+        {
+            return new()
+            {
+                Uid = User.Uid,
+                MsgData = new()
+                {
+                    MsgIndex = 0,
+                    MsgConfig = 1
+                },
+                OnPhonePendantId = 350005
+            };
+        }
+
+        public PlayerDetailData GetDetailData()
+        {
+            return new()
+            {
+                Uid = User.Uid,
+                Nickname = User.Nick,
+                Level = (uint)PlayerLevelData.GetInstance().CalculateLevel(User.Exp).Level,
+                SelfDesc = User.SelfDesc,
+                CustomHeadId = (uint)User.CustomHeadId,
+                FrameId = User.FrameId < 200001 ? 200001 : (uint)User.FrameId,
+                LeaderAvatar = AvatarList.FirstOrDefault(x => x.AvatarId == User.AvatarTeamList.FirstOrDefault()?.AvatarIdLists[0])?.ToDetailData(Equipment) ?? new() { AvatarId = 101 }
+            };
         }
     }
 }

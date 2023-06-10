@@ -33,50 +33,59 @@ namespace PemukulPaku.GameServer
 
             while (Client.Connected)
             {
-                Array.Clear(msg, 0, msg.Length);
-                int len = stream.Read(msg, 0, msg.Length);
-
-                if (len > 0)
+                try
                 {
-                    List<byte[]> packets = new ();
+                    Array.Clear(msg, 0, msg.Length);
+                    int len = stream.Read(msg, 0, msg.Length);
 
-                    ReadOnlySpan<byte> prefix = new byte[] { 0x01, 0x23, 0x45, 0x67 };
-                    ReadOnlySpan<byte> suffix = new byte[] { 0x89, 0xAB, 0xCD, 0xEF };
-
-                    Span<byte> message = msg.AsSpan();
-
-                    for (int offset = 0; offset < message.Length;)
+                    if (len > 0)
                     {
-                        var segment = message[offset..];
-                        int start = segment.IndexOf(prefix);
+                        List<byte[]> packets = new ();
 
-                        if (start == -1)
-                            break;
+                        ReadOnlySpan<byte> prefix = new byte[] { 0x01, 0x23, 0x45, 0x67 };
+                        ReadOnlySpan<byte> suffix = new byte[] { 0x89, 0xAB, 0xCD, 0xEF };
 
-                        int end = segment.IndexOf(suffix);
+                        Span<byte> message = msg.AsSpan();
 
-                        if (end == -1)
-                            break;
-
-                        end += suffix.Length;
-
-                        packets.Add(segment[start..end].ToArray());
-                        offset += end;
-                    }
-
-                    foreach (byte[] packet in packets)
-                    {
-                        if (Packet.IsValid(packet))
+                        for (int offset = 0; offset < message.Length;)
                         {
-                            ProcessPacket(new Packet(packet), true);
+                            var segment = message[offset..];
+                            int start = segment.IndexOf(prefix);
+
+                            if (start == -1)
+                                break;
+
+                            int end = segment.IndexOf(suffix);
+
+                            if (end == -1)
+                                break;
+
+                            end += suffix.Length;
+
+                            packets.Add(segment[start..end].ToArray());
+                            offset += end;
                         }
-                        else
+
+                        foreach (byte[] packet in packets)
                         {
-                            c.Error("Invalid packet received:", BitConverter.ToString(packet).Replace("-", ""));
+                            if (Packet.IsValid(packet))
+                            {
+                                ProcessPacket(new Packet(packet), true);
+                            }
+                            else
+                            {
+                                c.Error("Invalid packet received:", BitConverter.ToString(packet).Replace("-", ""));
+                            }
                         }
                     }
                 }
+                catch (Exception)
+                {
+                    break;
+                }
             }
+
+            DisconnectProtocol();
         }
 
         public void KeepAliveLoop()
@@ -94,6 +103,11 @@ namespace PemukulPaku.GameServer
                 Thread.Sleep(3000);
             }
 
+            DisconnectProtocol();
+        }
+
+        public void DisconnectProtocol()
+        {
             Player.SaveAll();
             c.Debug("Player data saved to database");
             c.Warn($"{Id} disconnected");
@@ -142,6 +156,10 @@ namespace PemukulPaku.GameServer
                 {
                     Client.GetStream().Write(packet.Raw, 0, packet.Raw.Length);
                     c.Log(PacketName);
+                }
+                catch (ObjectDisposedException)
+                {
+                    DisconnectProtocol();
                 }
                 catch (Exception ex)
                 {
