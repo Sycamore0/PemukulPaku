@@ -1,5 +1,6 @@
 using Common.Resources.Proto;
 using Common;
+using System.Text;
 
 namespace PemukulPaku.GameServer.Commands
 {
@@ -9,26 +10,26 @@ namespace PemukulPaku.GameServer.Commands
     {
         public override void Run(Session session, string[] args)
         {
-            RecvChatMsgNotify notify = new() { };
+            RecvChatMsgNotify notify = new();
             //hardcoding values is fun AND easy!
-            string msg = "<color=#B00B><size=26>Commands</size></color><size=16><color=#555>\n";
-            msg += "command <required> [optional]\n";
-            //msg += "┌\n";
+            StringBuilder msg = new("<color=#B00B><size=26>Commands</size></color><size=16><color=#555>\n");
+            msg.Append("command <required> [optional]\n");
+            //msg.Append("┌\n");
             foreach (Command Cmd in CommandFactory.Commands)
             {
-                if(Cmd.CmdType == CommandType.All || Cmd.CmdType == CommandType.Player)
+                if (Cmd.CmdType == CommandType.All || Cmd.CmdType == CommandType.Player)
                 {
-                    msg += "┝<size=22>" + Cmd.Name + " " + Cmd.Description + "</size>\n";
+                    msg.Append("┝<size=22>" + Cmd.Name + " " + Cmd.Description + "</size>\n");
                     if (Cmd.Examples is not null)
                     {
                         foreach (string Example in Cmd.Examples)
                         {
-                            msg += "│┕" + Example + "\n";
+                            msg.Append("│┕" + Example + "\n");
                         }
                     }
-                }                
+                }
             }
-            msg += "</color></size>";
+            msg.Append("</color></size>");
 
             //I really want to figure out how to grab from Chatroom.cs instead, but oh well.
             ChatMsg AiMsg = new()
@@ -36,16 +37,16 @@ namespace PemukulPaku.GameServer.Commands
                 Uid = 0,
                 Nickname = "Ai-chan",
                 Time = (uint)Global.GetUnixInSeconds(),
-                Msg = msg,
-                Content = new() { },
+                Msg = msg.ToString(),
+                Content = new(),
                 Channel = ChatMsg.MsgChannel.World,
                 AvatarId = 3201,
                 DressId = 593201,
                 FrameId = 200001,
                 CustomHeadId = 161080,
-                CheckResult = new() { NumberCheck = 0, ShieldType = 0, RewriteText = msg }
+                CheckResult = new() { NumberCheck = 0, ShieldType = 0, RewriteText = msg.ToString() }
             };
-            AiMsg.Content.Items.Add(new() { MsgStr = msg });
+            AiMsg.Content.Items.Add(new() { MsgStr = msg.ToString() });
             notify.ChatMsgLists.Add(AiMsg);
             session.Send(Packet.FromProto(notify, CmdId.RecvChatMsgNotify));
         }
@@ -54,7 +55,7 @@ namespace PemukulPaku.GameServer.Commands
         {
             foreach (Command Cmd in CommandFactory.Commands)
             {
-                Console.ForegroundColor= ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("      " + Cmd.Name);
                 Console.ResetColor();
                 c.Trail(Cmd.Description);
