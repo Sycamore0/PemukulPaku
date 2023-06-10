@@ -56,7 +56,7 @@ namespace PemukulPaku.GameServer.Commands
                         if (weaponData.EvoId == 0)
                         {
                             Weapon weapon = player.Equipment.AddWeapon(weaponData.Id);
-                            weapon.Level = value <= 0 ? (uint)weaponData.MaxLv : (uint)value;
+                            weapon.Level = value is not null && value <= 0 ? (uint)weaponData.MaxLv : value is not null ? (uint)value : (uint)weaponData.MaxLv;
                         }
                     }
                     break;
@@ -65,7 +65,7 @@ namespace PemukulPaku.GameServer.Commands
                     foreach (WeaponDataExcel weaponData in WeaponData.GetInstance().All)
                     {
                         Weapon weapon = player.Equipment.AddWeapon(weaponData.Id);
-                        weapon.Level = value <= 0 ? (uint)weaponData.MaxLv : (uint)value;
+                        weapon.Level = value is not null && value <= 0 ? (uint)weaponData.MaxLv : value is not null ? (uint)value : (uint)weaponData.MaxLv;
                     }
                     break;
                 case "stigmata":
@@ -75,7 +75,7 @@ namespace PemukulPaku.GameServer.Commands
                         if (stigmataData.EvoId == 0)
                         {
                             Stigmata stigmata = player.Equipment.AddStigmata(stigmataData.Id);
-                            stigmata.Level = value <= 0 ? (uint)stigmataData.MaxLv : (uint)value;
+                            stigmata.Level = value is not null && value <= 0 ? (uint)stigmataData.MaxLv : value is not null ? (uint)value : (uint)stigmataData.MaxLv;
                         }
                     }
                     break;
@@ -84,7 +84,7 @@ namespace PemukulPaku.GameServer.Commands
                     foreach (StigmataDataExcel stigmataData in StigmataData.GetInstance().All)
                     {
                         Stigmata stigmata = player.Equipment.AddStigmata(stigmataData.Id);
-                        stigmata.Level = value <= 0 ? (uint)stigmataData.MaxLv : (uint)value;
+                        stigmata.Level = value is not null && value <= 0 ? (uint)stigmataData.MaxLv : value is not null ? (uint)value : (uint)stigmataData.MaxLv;
                     }
                     break;
                 case "materials":
