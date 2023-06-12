@@ -110,7 +110,7 @@ namespace PemukulPaku.GameServer.Commands
                 }
             }
 
-            c.Log("Finished loading Commands");
+            c.Log("Finished Loading Commands");
         }
     }
 }

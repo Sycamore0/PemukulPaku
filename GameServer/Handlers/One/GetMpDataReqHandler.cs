@@ -12,7 +12,7 @@ namespace PemukulPaku.GameServer.Handlers.One
                 retcode = GetMpDataRsp.Retcode.Succ,
                 DataType = MpDataType.MpDataAll,
                 op_type = GetMpDataRsp.OpType.InitData,
-                MpLevel = 1,
+                MpLevel = 0,
                 MpExp = 0,
                 TeamAvatarId = session.Player.GetDetailData().LeaderAvatar.AvatarId,
                 PunishEndTime = 0

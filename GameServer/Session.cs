@@ -95,6 +95,7 @@ namespace PemukulPaku.GameServer
                 try
                 {
                     Send(Packet.FromProto(new KeepAliveNotify() { }, CmdId.KeepAliveNotify));
+                    LastServerKeepAlive = Global.GetUnixInSeconds();
                 }
                 catch
                 {
@@ -108,6 +109,9 @@ namespace PemukulPaku.GameServer
 
         public void DisconnectProtocol()
         {
+            if (Server.GetInstance().Sessions.GetValueOrDefault(Id) is null)
+                return;
+
             Player.SaveAll();
             c.Debug("Player data saved to database");
             c.Warn($"{Id} disconnected");

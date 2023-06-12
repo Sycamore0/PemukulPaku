@@ -7,7 +7,7 @@ namespace PemukulPaku.GameServer.Handlers.One
     {
         public void Handle(Session session, Packet packet)
         {
-            session.Send(Packet.FromProto(new MpGetTeamRsp() { retcode = MpGetTeamRsp.Retcode.NotInTeam }, CmdId.GetMpDataRsp));
+            session.Send(Packet.FromProto(new MpGetTeamRsp() { retcode = MpGetTeamRsp.Retcode.NotInTeam }, CmdId.MpGetTeamRsp));
         }
     }
 }

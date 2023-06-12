@@ -26,8 +26,6 @@ namespace PemukulPaku
             new Thread(HttpServer.Program.Main).Start();
             _ = Server.GetInstance();
 
-            Player Player = new(User.FromName("test"));
-
             ReadLine.GetInstance().Start();
         }
     }

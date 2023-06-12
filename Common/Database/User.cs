@@ -89,6 +89,7 @@ namespace Common.Database
         public uint AbyssGroupLevel { get; set; }
         public List<AvatarTeam> AvatarTeamList { get; set; }
         public List<CustomAvatarTeam> CustomAvatarTeamList { get; set; }
+        public List<OpenWorldStoryScheme> OpenWorldStory { get; set; } = new();
 
         public void Save()
         {
@@ -106,6 +107,32 @@ namespace Common.Database
             if (Exp > PlayerLevelData.GetInstance().GetMaxPossibleExp())
             {
                 Exp = PlayerLevelData.GetInstance().GetMaxPossibleExp();
+            }
+        }
+
+        public void AddOWStory(uint storyId)
+        {
+            OpenWorldStory.Add(new()
+            {
+                StoryId = storyId,
+                StoryProgress = 0,
+                AcceptTime = (uint)Global.GetUnixInSeconds(),
+                IsDone = false
+            });
+        }
+
+        public class OpenWorldStoryScheme : OpenworldStory
+        {
+            public bool IsDone;
+
+            public OpenworldStory ToProto()
+            {
+                return new()
+                {
+                    StoryId = StoryId,
+                    StoryProgress = StoryProgress,
+                    AcceptTime = AcceptTime
+                };
             }
         }
     }        

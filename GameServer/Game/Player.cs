@@ -9,12 +9,14 @@ namespace PemukulPaku.GameServer.Game
         public UserScheme User;
         public AvatarScheme[] AvatarList;
         public EquipmentScheme Equipment;
+        public List<OpenWorldScheme> OpenWorlds;
 
         public Player(UserScheme user)
         {
             User = user;
             Equipment = Common.Database.Equipment.FromUid(user.Uid);
             AvatarList = Common.Database.Avatar.AvatarsFromUid(user.Uid);
+            OpenWorlds = OpenWorld.FromUid(user.Uid);
         }
 
         public void SaveAll()
@@ -25,6 +27,10 @@ namespace PemukulPaku.GameServer.Game
             foreach (AvatarScheme Avatar in AvatarList)
             {
                 Avatar.Save();
+            }
+            foreach (OpenWorldScheme OpenWorld in OpenWorlds)
+            {
+                OpenWorld.Save();
             }
         }
 

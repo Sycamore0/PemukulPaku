@@ -39,8 +39,8 @@ namespace PemukulPaku.GameServer.Handlers
                     AccountUid = Packet.AccountUid,
                     UserType = 4,
                     HoyolabAccountUid = Packet.AccountUid,
-                    FightserverIp = 186782306,
-                    FightserverPort = 2096693423
+                    FightserverIp = 0,
+                    FightserverPort = 0
                 };
             }
 

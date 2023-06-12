@@ -13,6 +13,7 @@ namespace Common
         public static readonly MongoClient MongoClient = new(config.DatabaseUri);
         public static readonly IMongoDatabase db = MongoClient.GetDatabase("PemukulPaku");
         public static long GetUnixInSeconds() => ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds();
+        public static uint GetRandomSeed() => (uint)(GetUnixInSeconds() * new Random().Next(1, 10) / 10);
     }
 
     public interface IConfig

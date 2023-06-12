@@ -47,6 +47,9 @@ namespace PemukulPaku.GameServer.MPModule
 
             teamSyncNotify.TeamData.MemberLists.AddRange(team.Members.Select(member =>
             {
+                if (member.Session is null)
+                    return new MpTeamMember() { Index = member.Index, DressId = 0 };
+
                 return new MpTeamMember()
                 {
                     Index = member.Index,
@@ -72,9 +75,9 @@ namespace PemukulPaku.GameServer.MPModule
                 };
             }));
 
-            foreach (Session session in team.Members.Select(x => x.Session))
+            foreach (Session? session in team.Members.Where(x => x.Session is not null).Select(x => x.Session))
             {
-                session.Send(Packet.FromProto(teamSyncNotify, CmdId.MpTeamSyncNotify));
+                session?.Send(Packet.FromProto(teamSyncNotify, CmdId.MpTeamSyncNotify));
             }
         }
     }
@@ -94,7 +97,7 @@ namespace PemukulPaku.GameServer.MPModule
             StageId = stageId;
             MinLevel = minLevel;
             LobbyEnterType = lobbyEnterType;
-            Members = new List<TeamMember> { new(leader) };
+            Members = new List<TeamMember> { new(leader), new(null, 2), new(null, 3) };
             LeaderUid = leader.Player.User.Uid;
             Name = name;
         }
@@ -102,12 +105,12 @@ namespace PemukulPaku.GameServer.MPModule
 
     public class TeamMember
     {
-        public Session Session;
+        public Session? Session;
         public uint Index;
         public LobbyClientStatus ClientStatus { get; set; } = LobbyClientStatus.LobbyClientNone;
         public LobbyMemberStatus Status { get; set; } = LobbyMemberStatus.LobbyMemberReady;
 
-        public TeamMember(Session session, uint index = 1)
+        public TeamMember(Session? session = null, uint index = 1)
         {
             Session = session;
             Index = index;
