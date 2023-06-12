@@ -7,7 +7,7 @@ namespace PemukulPaku.GameServer.Commands
 {
     [CommandHandler("give", "<sel> [#] [id]", CommandType.Player,
         //example commands list
-        "gold 123456789","stigs 1", "weaps", "mats 999 2008", "valks", "outfits"
+        "gold 123456789", "stigs 1", "weaps", "mats 999 2008", "valks", "outfits"
     )]
     internal class GiveCommand : Command
     {
@@ -22,7 +22,7 @@ namespace PemukulPaku.GameServer.Commands
         public override void Run(Player player, string[] args)
         {
             string action = args[0];
-            int value = (args.Length > 1 && args[1] is not null) ? int.Parse(args[1]) : -1;
+            int? value = (args.Length >= 2 && args[1] is not null) ? int.Parse(args[1]) : null;
 
             switch (action)
             {
@@ -56,7 +56,7 @@ namespace PemukulPaku.GameServer.Commands
                         if (weaponData.EvoId == 0)
                         {
                             Weapon weapon = player.Equipment.AddWeapon(weaponData.Id);
-                            weapon.Level = value <= 0 ? (uint)weaponData.MaxLv : (uint)value;
+                            weapon.Level = value is not null && value <= 0 ? (uint)weaponData.MaxLv : value is not null ? (uint)value : (uint)weaponData.MaxLv;
                         }
                     }
                     break;
@@ -65,7 +65,7 @@ namespace PemukulPaku.GameServer.Commands
                     foreach (WeaponDataExcel weaponData in WeaponData.GetInstance().All)
                     {
                         Weapon weapon = player.Equipment.AddWeapon(weaponData.Id);
-                        weapon.Level = value <= 0 ? (uint)weaponData.MaxLv : (uint)value;
+                        weapon.Level = value is not null && value <= 0 ? (uint)weaponData.MaxLv : value is not null ? (uint)value : (uint)weaponData.MaxLv;
                     }
                     break;
                 case "stigmata":
@@ -75,7 +75,7 @@ namespace PemukulPaku.GameServer.Commands
                         if (stigmataData.EvoId == 0)
                         {
                             Stigmata stigmata = player.Equipment.AddStigmata(stigmataData.Id);
-                            stigmata.Level = value <= 0 ? (uint)stigmataData.MaxLv : (uint)value;
+                            stigmata.Level = value is not null && value <= 0 ? (uint)stigmataData.MaxLv : value is not null ? (uint)value : (uint)stigmataData.MaxLv;
                         }
                     }
                     break;
@@ -84,21 +84,25 @@ namespace PemukulPaku.GameServer.Commands
                     foreach (StigmataDataExcel stigmataData in StigmataData.GetInstance().All)
                     {
                         Stigmata stigmata = player.Equipment.AddStigmata(stigmataData.Id);
-                        stigmata.Level = value <= 0 ? (uint)stigmataData.MaxLv : (uint)value;
+                        stigmata.Level = value is not null && value <= 0 ? (uint)stigmataData.MaxLv : value is not null ? (uint)value : (uint)stigmataData.MaxLv;
                     }
                     break;
                 case "materials":
                 case "mats":
                 case "matz":
                     foreach (MaterialDataExcel materialData in MaterialData.GetInstance().All)
-                    { 
-                        player.Equipment.AddMaterial(materialData.Id, value > 0 || value < -1 ? value : 9999);
+                    {
+                        player.Equipment.AddMaterial(materialData.Id, value is not null && value != 0 ? (int)value : materialData.QuantityLimit);
                     }
                     break;
                 case "material-id":
                 case "gold":
-                    int materialId = args[2] is not null ? int.Parse(args[2]) : 100;
-                    player.Equipment.AddMaterial(materialId, value > 0 || value < -1 ? value : 9999);
+                    int materialId = args.Length >= 3 && args[2] is not null ? int.Parse(args[2]) : 100;
+                    int? quantityLimit = MaterialData.GetInstance().All.FirstOrDefault(m => m.Id == materialId)?.QuantityLimit;
+                    if (quantityLimit is not null)
+                    {
+                        player.Equipment.AddMaterial(materialId, value is not null && value != 0 ? (int)value : (int)quantityLimit);
+                    }
                     break;
                 case "dress":
                 case "outfits":
