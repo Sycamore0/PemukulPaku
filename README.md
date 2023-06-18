@@ -14,3 +14,4 @@
 ## Support
 [Discord server](https://discord.gg/fbsRYc7bBA) or GitHub issue
 
+...
